@@ -8,18 +8,32 @@ import (
 	"strings"
 
 	"golang.org/x/exp/constraints"
+	"golang.org/x/exp/slices"
 )
 
-func paperNeeded(parcel string) int {
-	sides := Map(strings.Split(parcel, "x"), Atoi)
-	l, w, h := sides[0], sides[1], sides[2]
+type Parcel struct {
+	l, w, h int
+}
 
+func parcel(s string) Parcel {
+	sides := Map(strings.Split(s, "x"), Atoi)
+	return Parcel{sides[0], sides[1], sides[2]}
+}
+
+func paperNeeded(p Parcel) int {
 	smallestSide := math.MaxInt
-	smallestSide = Min(smallestSide, l*w)
-	smallestSide = Min(smallestSide, w*h)
-	smallestSide = Min(smallestSide, h*l)
+	smallestSide = Min(smallestSide, p.l*p.w)
+	smallestSide = Min(smallestSide, p.w*p.h)
+	smallestSide = Min(smallestSide, p.h*p.l)
 
-	return 2*l*w + 2*w*h + 2*h*l + smallestSide
+	return 2*p.l*p.w + 2*p.w*p.h + 2*p.h*p.l + smallestSide
+}
+
+func ribbonNeeded(p Parcel) int {
+	volume := p.l * p.w * p.h
+	edges := []int{p.l, p.w, p.h}
+	slices.Sort(edges)
+	return volume + edges[0]*2 + edges[1]*2
 }
 
 func Atoi(s string) int {
@@ -58,6 +72,9 @@ func Sum[S []E, E constraints.Integer](slice S) E {
 var input string
 
 func main() {
-	part1 := Sum(Map(lines(input), paperNeeded))
+	parcels := Map(lines(input), parcel)
+	part1 := Sum(Map(parcels, paperNeeded))
+	part2 := Sum(Map(parcels, ribbonNeeded))
 	fmt.Println("Part1: ", part1)
+	fmt.Println("Part2: ", part2)
 }
