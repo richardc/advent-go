@@ -4,6 +4,16 @@ import (
 	"golang.org/x/exp/constraints"
 )
 
+func Filter[S ~[]E, E any](s S, p func(E) bool) S {
+	result := make(S, 0)
+	for _, v := range s {
+		if p(v) {
+			result = append(result, v)
+		}
+	}
+	return result
+}
+
 func Map[S []E, E any, R any](in S, f func(E) R) []R {
 	result := make([]R, 0, len(in))
 	for _, v := range in {
