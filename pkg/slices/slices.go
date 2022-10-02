@@ -19,3 +19,15 @@ func Sum[S []E, E constraints.Integer | constraints.Float](slice S) E {
 	}
 	return total
 }
+
+func Unique[S ~[]E, E comparable](s S) S {
+	new := make(S, 0)
+	seen := make(map[E]struct{})
+	for _, v := range s {
+		if _, ok := seen[v]; !ok {
+			new = append(new, v)
+			seen[v] = struct{}{}
+		}
+	}
+	return new
+}
