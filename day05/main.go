@@ -33,9 +33,8 @@ func isNice(s string) bool {
 }
 
 func doubledChar(s string) bool {
-	bytes := []byte(s)
-	for i, c := range bytes[:len(bytes)-1] {
-		if c == bytes[i+1] {
+	for i, _ := range s[:len(s)-1] {
+		if s[i] == s[i+1] {
 			return true
 		}
 	}
@@ -47,9 +46,8 @@ func isReallyNice(s string) bool {
 }
 
 func doubleDouble(s string) bool {
-	b := []byte(s)
-	for i, _ := range b[:len(b)-2] {
-		if strings.Contains(string(b[i+2:]), string(b[i:i+2])) {
+	for i, _ := range s[:len(s)-2] {
+		if strings.Contains(s[i+2:], s[i:i+2]) {
 			return true
 		}
 	}
@@ -57,9 +55,8 @@ func doubleDouble(s string) bool {
 }
 
 func framedChar(s string) bool {
-	bytes := []byte(s)
-	for i, c := range bytes[:len(bytes)-2] {
-		if c == bytes[i+2] {
+	for i, _ := range s[:len(s)-2] {
+		if s[i] == s[i+2] {
 			return true
 		}
 	}
