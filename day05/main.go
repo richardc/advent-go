@@ -35,7 +35,31 @@ func isNice(s string) bool {
 func doubledChar(s string) bool {
 	bytes := []byte(s)
 	for i, c := range bytes[:len(bytes)-1] {
-		if c == s[i+1] {
+		if c == bytes[i+1] {
+			return true
+		}
+	}
+	return false
+}
+
+func isReallyNice(s string) bool {
+	return framedChar(s) && doubleDouble(s)
+}
+
+func doubleDouble(s string) bool {
+	b := []byte(s)
+	for i, _ := range b[:len(b)-2] {
+		if strings.Contains(string(b[i+2:]), string(b[i:i+2])) {
+			return true
+		}
+	}
+	return false
+}
+
+func framedChar(s string) bool {
+	bytes := []byte(s)
+	for i, c := range bytes[:len(bytes)-2] {
+		if c == bytes[i+2] {
 			return true
 		}
 	}
@@ -48,6 +72,6 @@ var puzzle string
 func main() {
 	part1 := len(slices.Filter(input.Lines(puzzle), isNice))
 	fmt.Println("Part 1", part1)
-	part2 := 0
+	part2 := len(slices.Filter(input.Lines(puzzle), isReallyNice))
 	fmt.Println("Part 2", part2)
 }
