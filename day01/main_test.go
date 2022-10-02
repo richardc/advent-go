@@ -30,3 +30,23 @@ func TestWhatFloor(t *testing.T) {
 		})
 	}
 }
+
+func TestGoesNegative(t *testing.T) {
+	var tests = []struct {
+		input string
+		value int
+	}{
+		{")", 1},
+		{"()())", 5},
+	}
+
+	for _, testcase := range tests {
+		testname := testcase.input
+		t.Run(testname, func(t *testing.T) {
+			ans := goesNegative(testcase.input)
+			if ans != testcase.value {
+				t.Errorf("got %v, want %v", ans, testcase.value)
+			}
+		})
+	}
+}
