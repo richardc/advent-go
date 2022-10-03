@@ -1,23 +1,29 @@
-package main
+package day01
 
 import (
 	"testing"
 )
 
-func TestCountDeliveries(t *testing.T) {
+func TestWhatFloor(t *testing.T) {
 	var tests = []struct {
 		input string
 		value int
 	}{
-		{">", 2},
-		{"^>v<", 4},
-		{"^v^v^v^v^v", 2},
+		{"(())", 0},
+		{"()()", 0},
+		{"(((", 3},
+		{"(()(()(", 3},
+		{"))(((((", 3},
+		{"())", -1},
+		{"))(", -1},
+		{")))", -3},
+		{")())())", -3},
 	}
 
 	for _, testcase := range tests {
 		testname := testcase.input
 		t.Run(testname, func(t *testing.T) {
-			ans := countDeliveries(testcase.input)
+			ans := whatFloor(testcase.input)
 			if ans != testcase.value {
 				t.Errorf("got %v, want %v", ans, testcase.value)
 			}
@@ -25,20 +31,19 @@ func TestCountDeliveries(t *testing.T) {
 	}
 }
 
-func TestCountRoboDeliveries(t *testing.T) {
+func TestGoesNegative(t *testing.T) {
 	var tests = []struct {
 		input string
 		value int
 	}{
-		{"^v", 3},
-		{"^>v<", 3},
-		{"^v^v^v^v^v", 11},
+		{")", 1},
+		{"()())", 5},
 	}
 
 	for _, testcase := range tests {
 		testname := testcase.input
 		t.Run(testname, func(t *testing.T) {
-			ans := countRoboDeliveries(testcase.input)
+			ans := goesNegative(testcase.input)
 			if ans != testcase.value {
 				t.Errorf("got %v, want %v", ans, testcase.value)
 			}

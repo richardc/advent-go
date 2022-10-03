@@ -1,4 +1,4 @@
-package main
+package day02
 
 import "testing"
 
@@ -13,7 +13,7 @@ func TestPaperNeeded(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.input, func(t *testing.T) {
-			ans := paperNeeded(parcel(test.input))
+			ans := paperNeeded(newParcel(test.input))
 			if ans != test.expect {
 				t.Errorf("expected %v, got %v", test.expect, ans)
 			}
@@ -32,7 +32,7 @@ func TestRibbonNeeded(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.input, func(t *testing.T) {
-			ans := ribbonNeeded(parcel(test.input))
+			ans := ribbonNeeded(newParcel(test.input))
 			if ans != test.expect {
 				t.Errorf("expected %v, got %v", test.expect, ans)
 			}

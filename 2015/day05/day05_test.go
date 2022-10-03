@@ -1,29 +1,25 @@
-package main
+package day05
 
 import (
 	"testing"
 )
 
-func TestWhatFloor(t *testing.T) {
+func TestIsNice(t *testing.T) {
 	var tests = []struct {
 		input string
-		value int
+		value bool
 	}{
-		{"(())", 0},
-		{"()()", 0},
-		{"(((", 3},
-		{"(()(()(", 3},
-		{"))(((((", 3},
-		{"())", -1},
-		{"))(", -1},
-		{")))", -3},
-		{")())())", -3},
+		{"ugknbfddgicrmopn", true},
+		{"aaa", true},
+		{"jchzalrnumimnmhp", false},
+		{"haegwjzuvuyypxyu", false},
+		{"dvszwmarrgswjxmb", false},
 	}
 
 	for _, testcase := range tests {
 		testname := testcase.input
 		t.Run(testname, func(t *testing.T) {
-			ans := whatFloor(testcase.input)
+			ans := isNice(testcase.input)
 			if ans != testcase.value {
 				t.Errorf("got %v, want %v", ans, testcase.value)
 			}
@@ -31,19 +27,21 @@ func TestWhatFloor(t *testing.T) {
 	}
 }
 
-func TestGoesNegative(t *testing.T) {
+func TestIsReallyNice(t *testing.T) {
 	var tests = []struct {
 		input string
-		value int
+		value bool
 	}{
-		{")", 1},
-		{"()())", 5},
+		{"qjhvhtzxzqqjkmpb", true},
+		{"xxyxx", true},
+		{"uurcxstgmygtbstg", false},
+		{"ieodomkazucvgmuy", false},
 	}
 
 	for _, testcase := range tests {
 		testname := testcase.input
 		t.Run(testname, func(t *testing.T) {
-			ans := goesNegative(testcase.input)
+			ans := isReallyNice(testcase.input)
 			if ans != testcase.value {
 				t.Errorf("got %v, want %v", ans, testcase.value)
 			}

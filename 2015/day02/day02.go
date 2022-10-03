@@ -1,23 +1,35 @@
-package main
+package day02
 
 import (
 	_ "embed"
-	"fmt"
 	"math"
 	"strconv"
 	"strings"
 
 	"golang.org/x/exp/slices"
 
-	mth "advent2015/pkg/math"
-	slces "advent2015/pkg/slices"
+	mth "github.com/richardc/advent-go/math"
+	"github.com/richardc/advent-go/runner"
+	slces "github.com/richardc/advent-go/slices"
 )
+
+//go:embed input.txt
+var input string
+
+func init() {
+	runner.Register(runner.Solution{
+		Day:   2,
+		Input: func() any { return slces.Map(lines(input), newParcel) },
+		Part1: func(parcels any) any { return slces.Sum(slces.Map(parcels.([]Parcel), paperNeeded)) },
+		Part2: func(parcels any) any { return slces.Sum(slces.Map(parcels.([]Parcel), ribbonNeeded)) },
+	})
+}
 
 type Parcel struct {
 	l, w, h int
 }
 
-func parcel(s string) Parcel {
+func newParcel(s string) Parcel {
 	sides := slces.Map(strings.Split(s, "x"), Atoi)
 	return Parcel{sides[0], sides[1], sides[2]}
 }
@@ -45,15 +57,4 @@ func Atoi(s string) int {
 
 func lines(all string) []string {
 	return strings.Split(strings.Trim(all, " \n"), "\n")
-}
-
-//go:embed input.txt
-var input string
-
-func main() {
-	parcels := slces.Map(lines(input), parcel)
-	part1 := slces.Sum(slces.Map(parcels, paperNeeded))
-	part2 := slces.Sum(slces.Map(parcels, ribbonNeeded))
-	fmt.Println("Part1: ", part1)
-	fmt.Println("Part2: ", part2)
 }

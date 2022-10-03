@@ -1,9 +1,21 @@
-package main
+package day01
 
 import (
 	_ "embed"
-	"fmt"
+
+	"github.com/richardc/advent-go/runner"
 )
+
+//go:embed input.txt
+var input string
+
+func init() {
+	runner.Register(runner.Solution{
+		Day:   1,
+		Part1: func(i any) any { return whatFloor(input) },
+		Part2: func(i any) any { return goesNegative(input) },
+	})
+}
 
 func whatFloor(input string) int {
 	count := 0
@@ -33,12 +45,4 @@ func goesNegative(input string) int {
 		}
 	}
 	return -1
-}
-
-//go:embed input.txt
-var input string
-
-func main() {
-	fmt.Println("Part1: ", whatFloor(input))
-	fmt.Println("Part2: ", goesNegative(input))
 }

@@ -1,13 +1,23 @@
-package main
+package day05
 
 import (
 	_ "embed"
-	"fmt"
 	"strings"
 
-	"advent2015/pkg/input"
-	"advent2015/pkg/slices"
+	"github.com/richardc/advent-go/input"
+	"github.com/richardc/advent-go/runner"
+	"github.com/richardc/advent-go/slices"
 )
+
+//go:embed input.txt
+var puzzle string
+
+func init() {
+	runner.Register(runner.Solution{Day: 5,
+		Part1: func(any) any { return len(slices.Filter(input.Lines(puzzle), isNice)) },
+		Part2: func(any) any { return len(slices.Filter(input.Lines(puzzle), isReallyNice)) },
+	})
+}
 
 func isNice(s string) bool {
 	switch {
@@ -61,14 +71,4 @@ func framedChar(s string) bool {
 		}
 	}
 	return false
-}
-
-//go:embed input.txt
-var puzzle string
-
-func main() {
-	part1 := len(slices.Filter(input.Lines(puzzle), isNice))
-	fmt.Println("Part 1", part1)
-	part2 := len(slices.Filter(input.Lines(puzzle), isReallyNice))
-	fmt.Println("Part 2", part2)
 }

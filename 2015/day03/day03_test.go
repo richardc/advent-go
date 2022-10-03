@@ -1,25 +1,23 @@
-package main
+package day03
 
 import (
 	"testing"
 )
 
-func TestIsNice(t *testing.T) {
+func TestCountDeliveries(t *testing.T) {
 	var tests = []struct {
 		input string
-		value bool
+		value int
 	}{
-		{"ugknbfddgicrmopn", true},
-		{"aaa", true},
-		{"jchzalrnumimnmhp", false},
-		{"haegwjzuvuyypxyu", false},
-		{"dvszwmarrgswjxmb", false},
+		{">", 2},
+		{"^>v<", 4},
+		{"^v^v^v^v^v", 2},
 	}
 
 	for _, testcase := range tests {
 		testname := testcase.input
 		t.Run(testname, func(t *testing.T) {
-			ans := isNice(testcase.input)
+			ans := countDeliveries(testcase.input)
 			if ans != testcase.value {
 				t.Errorf("got %v, want %v", ans, testcase.value)
 			}
@@ -27,21 +25,20 @@ func TestIsNice(t *testing.T) {
 	}
 }
 
-func TestIsReallyNice(t *testing.T) {
+func TestCountRoboDeliveries(t *testing.T) {
 	var tests = []struct {
 		input string
-		value bool
+		value int
 	}{
-		{"qjhvhtzxzqqjkmpb", true},
-		{"xxyxx", true},
-		{"uurcxstgmygtbstg", false},
-		{"ieodomkazucvgmuy", false},
+		{"^v", 3},
+		{"^>v<", 3},
+		{"^v^v^v^v^v", 11},
 	}
 
 	for _, testcase := range tests {
 		testname := testcase.input
 		t.Run(testname, func(t *testing.T) {
-			ans := isReallyNice(testcase.input)
+			ans := countRoboDeliveries(testcase.input)
 			if ans != testcase.value {
 				t.Errorf("got %v, want %v", ans, testcase.value)
 			}

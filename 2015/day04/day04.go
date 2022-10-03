@@ -1,4 +1,4 @@
-package main
+package day04
 
 import (
 	_ "embed"
@@ -6,7 +6,20 @@ import (
 	"strings"
 
 	"crypto/md5"
+
+	"github.com/richardc/advent-go/runner"
 )
+
+//go:embed input.txt
+var input string
+
+func init() {
+	runner.Register(runner.Solution{Day: 4,
+		Input: func() any { return strings.Trim(input, "\n") },
+		Part1: func(in any) any { return mineMD5(in.(string)) },
+		Part2: func(in any) any { return mineMD56(in.(string)) },
+	})
+}
 
 func mineMD5(s string) int {
 	guess := 0
@@ -30,14 +43,4 @@ func mineMD56(s string) int {
 
 		guess++
 	}
-}
-
-//go:embed input.txt
-var input string
-
-func main() {
-	part1 := mineMD5(strings.Trim(input, "\n"))
-	fmt.Println("Part 1", part1)
-	part2 := mineMD56(strings.Trim(input, "\n"))
-	fmt.Println("Part 2", part2)
 }

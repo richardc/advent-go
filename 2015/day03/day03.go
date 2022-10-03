@@ -1,12 +1,22 @@
-package main
+package day03
 
 import (
 	_ "embed"
-	"fmt"
 	"strings"
 
-	"advent2015/pkg/slices"
+	"github.com/richardc/advent-go/runner"
+	"github.com/richardc/advent-go/slices"
 )
+
+//go:embed input.txt
+var input string
+
+func init() {
+	runner.Register(runner.Solution{Day: 3,
+		Part1: func(any) any { return countDeliveries(input) },
+		Part2: func(any) any { return countRoboDeliveries(input) },
+	})
+}
 
 type location struct{ x, y int }
 
@@ -61,14 +71,4 @@ func countRoboDeliveries(moves string) int {
 	robot := calcDeliveries(strings.Map(oddIndexes(), moves))
 	all := append(santa, robot...)
 	return len(slices.Unique(all))
-}
-
-//go:embed input.txt
-var input string
-
-func main() {
-	part1 := countDeliveries(input)
-	fmt.Println("Part 1", part1)
-	part2 := countRoboDeliveries(input)
-	fmt.Println("Part 2", part2)
 }
