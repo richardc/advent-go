@@ -43,7 +43,7 @@ func isNice(s string) bool {
 }
 
 func doubledChar(s string) bool {
-	for i, _ := range s[:len(s)-1] {
+	for i := range s[:len(s)-1] {
 		if s[i] == s[i+1] {
 			return true
 		}
@@ -56,7 +56,7 @@ func isReallyNice(s string) bool {
 }
 
 func doubleDouble(s string) bool {
-	for i, _ := range s[:len(s)-2] {
+	for i := range s[:len(s)-2] {
 		if strings.Contains(s[i+2:], s[i:i+2]) {
 			return true
 		}
@@ -65,7 +65,7 @@ func doubleDouble(s string) bool {
 }
 
 func framedChar(s string) bool {
-	for i, _ := range s[:len(s)-2] {
+	for i := range s[:len(s)-2] {
 		if s[i] == s[i+2] {
 			return true
 		}
