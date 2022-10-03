@@ -1,11 +1,12 @@
 package runner
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"os"
+	"runtime/pprof"
 
-	"github.com/mitchellh/cli"
 	"golang.org/x/exp/slices"
 )
 
@@ -39,51 +40,26 @@ func Register(s Solution) {
 }
 
 func Run() {
-	c := cli.NewCLI("advent", "0.0.0")
-	c.Args = os.Args[1:]
-	c.Commands = map[string]cli.CommandFactory{
-		"all":    allCommandFactory,
-		"latest": latestCommandFactory,
-		"":       latestCommandFactory,
+	cpuprofile := flag.String("cpuprofile", "", "PATH")
+	runall := flag.Bool("all", false, "Runs all options")
+	flag.Parse()
+
+	if cpuprofile != nil && *cpuprofile != "" {
+		f, err := os.Create(*cpuprofile)
+		if err != nil {
+			log.Fatal(err)
+		}
+		pprof.StartCPUProfile(f)
+		defer pprof.StopCPUProfile()
 	}
 
-	exitStatus, err := c.Run()
-	if err != nil {
-		log.Println(err)
-	}
-
-	os.Exit(exitStatus)
-}
-func allCommandFactory() (cli.Command, error) {
-	return &allCommand{}, nil
-}
-
-type allCommand struct{}
-
-func (c *allCommand) Synopsis() string { return "Runs all days solutions" }
-func (c *allCommand) Help() string     { return "" }
-func (c *allCommand) Run([]string) int {
 	slices.SortFunc(solutions, func(s1, s2 Solution) bool { return s1.Day < s2.Day })
 
-	for _, s := range solutions {
-		s.Run()
+	if runall != nil && *runall {
+		for _, s := range solutions {
+			s.Run()
+		}
+	} else {
+		solutions[len(solutions)-1].Run()
 	}
-
-	return 0
-}
-
-func latestCommandFactory() (cli.Command, error) {
-	return &latestCommand{}, nil
-}
-
-type latestCommand struct{}
-
-func (c *latestCommand) Synopsis() string { return "Runs latest days solution" }
-func (c *latestCommand) Help() string     { return "" }
-func (c *latestCommand) Run([]string) int {
-	slices.SortFunc(solutions, func(s1, s2 Solution) bool { return s1.Day < s2.Day })
-
-	solutions[len(solutions)-1].Run()
-
-	return 0
 }
