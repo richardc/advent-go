@@ -6,6 +6,7 @@ import (
 	_ "github.com/richardc/advent-go/2015/day03"
 	_ "github.com/richardc/advent-go/2015/day04"
 	_ "github.com/richardc/advent-go/2015/day05"
+	_ "github.com/richardc/advent-go/2015/day06"
 
 	"github.com/richardc/advent-go/runner"
 )
