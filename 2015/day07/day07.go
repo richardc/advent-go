@@ -2,6 +2,7 @@ package day07
 
 import (
 	_ "embed"
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -17,6 +18,7 @@ func init() {
 		Day:   7,
 		Input: func() any { return input.Lines(puzzle) },
 		Part1: func(i any) any { return valueOfA(i.([]string)) },
+		Part2: func(i any) any { return valueOfAchainingB(i.([]string)) },
 	})
 }
 
@@ -36,9 +38,9 @@ func resolveWiring(c []string) map[string]Value {
 		target := parts[1]
 		args := strings.Split(parts[0], " ")
 		switch len(args) {
-		case 1:
+		case 1: // 42 -> a
 			wirings[target] = value(args[0])
-		case 2: // NOT
+		case 2: // NOT z -> a
 			wirings[target] = &Not{value(args[1])}
 		case 3:
 			left := value(args[0])
@@ -142,4 +144,10 @@ func (a *Rshift) Eval(t Bindings) Value {
 
 func valueOfA(c []string) Value {
 	return resolveWiring(c)["a"]
+}
+
+func valueOfAchainingB(c []string) Value {
+	a := valueOfA(c)
+	c = append(c, fmt.Sprintf("%d -> b", a))
+	return valueOfA(c)
 }
