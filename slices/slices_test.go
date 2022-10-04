@@ -2,6 +2,7 @@ package slices
 
 import (
 	"reflect"
+	"strconv"
 	"testing"
 )
 
@@ -18,5 +19,18 @@ func TestPermutations(t *testing.T) {
 
 	if !reflect.DeepEqual(p, expect) {
 		t.Errorf("got %v, expected %v", p, expect)
+	}
+}
+
+func TestGroupByFunc(t *testing.T) {
+	groups := GroupByFunc([]int{1, 1, 2, 2, 2, 1}, func(i int) string { return strconv.Itoa(i) })
+	expect := []Group[string, int]{
+		{"1", []int{1, 1}},
+		{"2", []int{2, 2, 2}},
+		{"1", []int{1}},
+	}
+
+	if !reflect.DeepEqual(groups, expect) {
+		t.Errorf("got %v, expected %v", groups, expect)
 	}
 }

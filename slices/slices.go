@@ -22,6 +22,32 @@ func Map[S []E, E any, R any](in S, f func(E) R) []R {
 	return result
 }
 
+type Group[K any, E any] struct {
+	Key   K
+	Group []E
+}
+
+func GroupBy[E comparable](s []E) []Group[E, E] {
+	return GroupByFunc(s, func(i E) E { return i })
+}
+
+func GroupByFunc[E any, K comparable](s []E, f func(E) K) []Group[K, E] {
+	groups := []Group[K, E]{}
+	current := Group[K, E]{f(s[0]), []E{s[0]}}
+
+	for _, v := range s[1:] {
+		key := f(v)
+		if current.Key != key {
+			groups = append(groups, current)
+			current = Group[K, E]{key, []E{v}}
+		} else {
+			current.Group = append(current.Group, v)
+		}
+	}
+
+	return append(groups, current)
+}
+
 func Sum[S []E, E constraints.Integer | constraints.Float](slice S) E {
 	var total E
 	for _, v := range slice {
