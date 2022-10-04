@@ -40,6 +40,30 @@ func Min[E constraints.Ordered](s []E) E {
 	return min
 }
 
+func Max[E constraints.Ordered](s []E) E {
+	max := s[0]
+	for _, v := range s {
+		if v > max {
+			max = v
+		}
+	}
+	return max
+}
+
+func MinMax[E constraints.Ordered](s []E) (E, E) {
+	min := s[0]
+	max := s[0]
+	for _, v := range s {
+		if v < min {
+			min = v
+		}
+		if v > max {
+			max = v
+		}
+	}
+	return min, max
+}
+
 func Unique[S ~[]E, E comparable](s S) S {
 	new := make(S, 0)
 	seen := make(map[E]struct{})

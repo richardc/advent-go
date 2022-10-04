@@ -17,9 +17,13 @@ var puzzle string
 
 func init() {
 	runner.Register(runner.Solution{
-		Day:   9,
-		Input: func() any { return paths(input.Lines(puzzle)) },
-		Part1: func(i any) any { return shortestRoute(i.([]path)) },
+		Day: 9,
+		Input: func() any {
+			min, max := shortestLongestRoute(paths(input.Lines(puzzle)))
+			return []int{min, max}
+		},
+		Part1: func(i any) any { return i.([]int)[0] },
+		Part2: func(i any) any { return i.([]int)[1] },
 	})
 }
 
@@ -30,6 +34,16 @@ type path struct {
 }
 
 func shortestRoute(paths []path) int {
+	min, _ := shortestLongestRoute(paths)
+	return min
+}
+
+func longestRoute(paths []path) int {
+	_, max := shortestLongestRoute(paths)
+	return max
+}
+
+func shortestLongestRoute(paths []path) (int, int) {
 	graph := map[string]int{}
 	places := map[string]struct{}{}
 	for _, path := range paths {
@@ -50,7 +64,7 @@ func shortestRoute(paths []path) int {
 		return result
 	})
 
-	return slices.Min(costs)
+	return slices.MinMax(costs)
 }
 
 func newPath(s string) path {
