@@ -30,6 +30,16 @@ func Sum[S []E, E constraints.Integer | constraints.Float](slice S) E {
 	return total
 }
 
+func Min[E constraints.Ordered](s []E) E {
+	min := s[0]
+	for _, v := range s {
+		if v < min {
+			min = v
+		}
+	}
+	return min
+}
+
 func Unique[S ~[]E, E comparable](s S) S {
 	new := make(S, 0)
 	seen := make(map[E]struct{})
