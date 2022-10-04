@@ -13,7 +13,7 @@ var puzzle string
 
 func init() {
 	runner.Register(runner.Solution{
-		Day:   9,
+		Day:   8,
 		Input: func() any { return input.Lines(puzzle) },
 		Part1: func(i any) any { return countSpecials(i.([]string)) },
 		Part2: func(i any) any { return countEscaped(i.([]string)) },
