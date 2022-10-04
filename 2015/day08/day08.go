@@ -16,6 +16,7 @@ func init() {
 		Day:   9,
 		Input: func() any { return input.Lines(puzzle) },
 		Part1: func(i any) any { return countSpecials(i.([]string)) },
+		Part2: func(i any) any { return countEscaped(i.([]string)) },
 	})
 }
 
@@ -30,17 +31,36 @@ func countChars(s string) int {
 				// \\ and \"
 				i++
 			}
-
 		}
 		count++
 	}
 	return count - 1
 }
 
+func countEscape(s string) int {
+	count := 0
+	for i := 0; i < len(s); i++ {
+		if s[i] == '\\' || s[i] == '"' {
+			count++
+		}
+		count++
+	}
+
+	return count + 2
+}
+
 func countSpecial(s string) int {
 	return len(s) - countChars(s)
 }
 
+func escapeGrowth(s string) int {
+	return countEscape(s) - len(s)
+}
+
 func countSpecials(s []string) int {
 	return slices.Sum(slices.Map(s, countSpecial))
+}
+
+func countEscaped(s []string) int {
+	return slices.Sum(slices.Map(s, escapeGrowth))
 }
