@@ -41,3 +41,23 @@ func Unique[S ~[]E, E comparable](s S) S {
 	}
 	return new
 }
+
+func Permutations[E any](s []E) [][]E {
+	result := [][]E{}
+
+	var perm func([]E, int)
+	perm = func(s []E, k int) {
+		if k == len(s) {
+			result = append(result, append([]E{}, s...))
+		} else {
+			for i := k; i < len(s); i++ {
+				s[k], s[i] = s[i], s[k]
+				perm(s, k+1)
+				s[k], s[i] = s[i], s[k]
+			}
+		}
+	}
+
+	perm(s, 0)
+	return result
+}
