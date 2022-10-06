@@ -19,6 +19,7 @@ func init() {
 		Day:   14,
 		Input: func() any { return slices.Map(input.Lines(puzzle), newReindeer) },
 		Part1: func(i any) any { return winningDistanceAt(i.([]reindeer), 2503) },
+		Part2: func(i any) any { return winningScoreAt(i.([]reindeer), 2503) },
 	})
 }
 
@@ -50,6 +51,7 @@ type state struct {
 	resting  bool
 	timer    int
 	position int
+	score    int
 }
 
 func (s *state) Tick() {
@@ -87,4 +89,30 @@ func winningDistanceAt(r []reindeer, time int) int {
 	}
 
 	return slices.Max(slices.Map(deer, func(d *state) int { return d.position }))
+}
+
+func winningScoreAt(r []reindeer, time int) int {
+	deer := slices.Map(r, func(r reindeer) *state {
+		// Start with a zero timer, but rested and ready to burst
+		return &state{
+			deer:    r,
+			resting: true,
+		}
+	})
+
+	for now := 0; now < time; now++ {
+		for _, d := range deer {
+			d.Tick()
+		}
+		// fmt.Printf("now %d:  %v\n", now, deer)
+		front := slices.Max(slices.Map(deer, func(d *state) int { return d.position }))
+
+		for _, d := range deer {
+			if d.position == front {
+				d.score++
+			}
+		}
+	}
+
+	return slices.Max(slices.Map(deer, func(d *state) int { return d.score }))
 }

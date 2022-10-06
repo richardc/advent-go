@@ -19,3 +19,12 @@ func TestWinningDistanceAt(t *testing.T) {
 		t.Errorf("got %v, want %v", got, expected)
 	}
 }
+
+func TestWinningScoreAt(t *testing.T) {
+	players := slices.Map(input.Lines(example), newReindeer)
+	expected := 689
+	got := winningScoreAt(players, 1000)
+	if got != expected {
+		t.Errorf("got %v, want %v", got, expected)
+	}
+}
