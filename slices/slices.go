@@ -121,3 +121,9 @@ func Permutations[E any](s []E) [][]E {
 	perm(s, 0)
 	return result
 }
+
+func Reverse[E any](s []E) {
+	for i, j := 0, len(s)-1; i < j; i, j = i+1, j-1 {
+		s[i], s[j] = s[j], s[i]
+	}
+}
