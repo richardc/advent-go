@@ -77,7 +77,6 @@ func incrementPassword(s string) string {
 	for i := range s {
 		result[i] = byte('a') + byte(value%26)
 		value /= 26
-
 	}
 
 	slices.Reverse(result)
