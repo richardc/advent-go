@@ -12,7 +12,7 @@ var example string
 
 func TestHappiestSeating(t *testing.T) {
 	expected := 330
-	got := happiestSeating(input.Lines(example))
+	got := happiestSeating(input.Lines(example), false)
 	if got != expected {
 		t.Errorf("got %v, expected %v", got, expected)
 	}

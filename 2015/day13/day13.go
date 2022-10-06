@@ -20,7 +20,8 @@ func init() {
 	runner.Register(runner.Solution{
 		Day:   13,
 		Input: func() any { return input.Lines(puzzle) },
-		Part1: func(i any) any { return happiestSeating(i.([]string)) },
+		Part1: func(i any) any { return happiestSeating(i.([]string), false) },
+		Part2: func(i any) any { return happiestSeating(i.([]string), true) },
 	})
 }
 
@@ -32,7 +33,7 @@ func edge(a, b string) [2]string {
 	}
 }
 
-func happiestSeating(s []string) int {
+func happiestSeating(s []string, withDullard bool) int {
 	graph := map[[2]string]int{}
 	names := map[string]struct{}{}
 	for _, r := range s {
@@ -51,6 +52,10 @@ func happiestSeating(s []string) int {
 		}
 
 		graph[edge(guest1, guest2)] += gain
+	}
+
+	if withDullard {
+		names[""] = struct{}{}
 	}
 
 	guests := maps.Keys(names)
