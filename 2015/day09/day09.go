@@ -38,11 +38,6 @@ func shortestRoute(paths []path) int {
 	return min
 }
 
-func longestRoute(paths []path) int {
-	_, max := shortestLongestRoute(paths)
-	return max
-}
-
 func shortestLongestRoute(paths []path) (int, int) {
 	graph := map[string]int{}
 	places := map[string]struct{}{}
