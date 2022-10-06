@@ -14,8 +14,15 @@ var puzzle string
 
 func init() {
 	runner.Register(runner.Solution{
-		Day:   11,
-		Part1: func(i any) any { return nextPassword(strings.TrimSpace(puzzle)) },
+		Day: 11,
+		Input: func() any {
+			start := strings.TrimSpace(puzzle)
+			one := nextPassword(start)
+			two := nextPassword(one)
+			return []string{one, two}
+		},
+		Part1: func(i any) any { return i.([]string)[0] },
+		Part2: func(i any) any { return i.([]string)[1] },
 	})
 }
 
