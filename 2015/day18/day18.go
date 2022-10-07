@@ -18,6 +18,7 @@ func init() {
 		Day:   18,
 		Input: func() any { return newLife(puzzle) },
 		Part1: func(i any) any { return iterateLit(i.(life), 100) },
+		Part2: func(i any) any { return iterateLitCorners(i.(life), 100) },
 	})
 }
 
@@ -97,9 +98,25 @@ func (l life) neighbours(cx, cy int) int {
 	return count
 }
 
+func (l *life) turnOnCorners() {
+	l.cells[0][0] = true
+	l.cells[l.y-1][0] = true
+	l.cells[0][l.x-1] = true
+	l.cells[l.y-1][l.x-1] = true
+}
+
 func iterateLit(game life, iter int) int {
 	for i := 0; i < iter; i++ {
 		game.step()
+	}
+	return game.lit()
+}
+
+func iterateLitCorners(game life, iter int) int {
+	game.turnOnCorners()
+	for i := 0; i < iter; i++ {
+		game.step()
+		game.turnOnCorners()
 	}
 	return game.lit()
 }
