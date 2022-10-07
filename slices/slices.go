@@ -122,6 +122,20 @@ func Permutations[E any](s []E) [][]E {
 	return result
 }
 
+func Powerset[E any](set []E) [][]E {
+	powerSet := [][]E{{}}
+
+	for _, es := range set {
+		var u [][]E
+		for _, er := range powerSet {
+			u = append(u, append([]E{es}, er...))
+		}
+		powerSet = append(powerSet, u...)
+	}
+
+	return powerSet
+}
+
 func Reverse[E any](s []E) {
 	for i, j := 0, len(s)-1; i < j; i, j = i+1, j-1 {
 		s[i], s[j] = s[j], s[i]
