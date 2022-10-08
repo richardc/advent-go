@@ -15,3 +15,13 @@ func Max[T constraints.Ordered](a, b T) T {
 	}
 	return b
 }
+
+func Signum[T constraints.Signed](n T) T {
+	switch {
+	case n < 0:
+		return -1
+	case n > 0:
+		return 1
+	}
+	return 0
+}
