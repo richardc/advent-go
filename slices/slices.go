@@ -56,6 +56,17 @@ func Sum[S []E, E constraints.Integer | constraints.Float](slice S) E {
 	return total
 }
 
+func Product[E constraints.Integer | constraints.Float](s []E) E {
+	if len(s) < 1 {
+		return 0
+	}
+	total := E(1)
+	for _, v := range s {
+		total *= v
+	}
+	return total
+}
+
 func Min[E constraints.Ordered](s []E) E {
 	min := s[0]
 	for _, v := range s {
@@ -100,6 +111,31 @@ func Unique[S ~[]E, E comparable](s S) S {
 		}
 	}
 	return new
+}
+
+func CombinationsFunc[E any](s []E, n int, f func([]E)) {
+	var comb func([]E, int)
+	comb = func(s []E, k int) {
+		if n == k {
+			f(s[:n])
+		} else {
+			for i := k; i < len(s); i++ {
+				s[k], s[i] = s[i], s[k]
+				comb(s, k+1)
+				s[k], s[i] = s[i], s[k]
+			}
+		}
+	}
+
+	comb(s, 0)
+}
+
+func Combinations[E any](s []E, n int) [][]E {
+	result := [][]E{}
+	CombinationsFunc(s, n, func(c []E) {
+		result = append(result, append([]E{}, c...))
+	})
+	return result
 }
 
 func Permutations[E any](s []E) [][]E {

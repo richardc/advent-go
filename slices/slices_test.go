@@ -6,6 +6,22 @@ import (
 	"testing"
 )
 
+func TestCombinations(t *testing.T) {
+	c := Combinations([]int{1, 2, 3}, 2)
+	expect := [][]int{
+		{1, 2},
+		{1, 3},
+		{2, 1},
+		{2, 3},
+		{3, 2},
+		{3, 1},
+	}
+
+	if !reflect.DeepEqual(c, expect) {
+		t.Errorf("got %v, expected %v", c, expect)
+	}
+}
+
 func TestPermutations(t *testing.T) {
 	p := Permutations([]int{1, 2, 3})
 	expect := [][]int{
