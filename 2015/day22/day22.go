@@ -18,13 +18,26 @@ func init() {
 	runner.Register(runner.Solution{
 		Day:   22,
 		Input: func() any { return newBoss(input.Lines(puzzle)) },
-		Part1: func(i any) any { return cheapestWin(game{w: wizard{health: 50, mana: 500}, b: i.(boss)}) },
+		Part1: func(i any) any {
+			return cheapestWin(game{
+				w: wizard{health: 50, mana: 500},
+				b: i.(boss),
+			})
+		},
+		Part2: func(i any) any {
+			return cheapestWin(game{
+				w: wizard{health: 50, mana: 500},
+				b: i.(boss),
+				h: true,
+			})
+		},
 	})
 }
 
 type game struct {
 	b boss
 	w wizard
+	h bool
 }
 
 type boss struct {
@@ -136,6 +149,9 @@ func (g game) legal() bool {
 
 func (g game) moves() []game {
 	g.tick()
+	if g.h {
+		g.w.health--
+	}
 	moves := []game{
 		g.drain(),
 		g.missile(),
