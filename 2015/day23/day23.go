@@ -16,7 +16,8 @@ func init() {
 	runner.Register(runner.Solution{
 		Day:   23,
 		Input: func() any { return slices.Map(input.Lines(puzzle), newInstr) },
-		Part1: func(i any) any { return valueOfB(i.([]instr)) },
+		Part1: func(i any) any { return valueOfB(cpu{}, i.([]instr)) },
+		Part2: func(i any) any { return valueOfB(cpu{a: 1}, i.([]instr)) },
 	})
 }
 
@@ -108,8 +109,7 @@ func newInstr(s string) instr {
 	panic("Unknown")
 }
 
-func valueOfB(prog []instr) int {
-	c := cpu{}
+func valueOfB(c cpu, prog []instr) int {
 	for c.pc >= 0 && c.pc < len(prog) {
 		prog[c.pc].apply(&c)
 	}
