@@ -15,12 +15,13 @@ func init() {
 	runner.Register(runner.Solution{
 		Day:   24,
 		Input: func() any { return slices.Map(input.Lines(puzzle), input.MustAtoi) },
-		Part1: func(i any) any { return smallestQE(i.([]int)) },
+		Part1: func(i any) any { return smallestQE(i.([]int), 3) },
+		Part2: func(i any) any { return smallestQE(i.([]int), 4) },
 	})
 }
 
-func smallestQE(s []int) int {
-	goal := slices.Sum(s) / 3
+func smallestQE(s []int, baskets int) int {
+	goal := slices.Sum(s) / baskets
 	for n := 1; n < len(s); n++ {
 		// fmt.Printf("Testing with a basket of %d from %d\n", n, len(s))
 		var fits [][]int
