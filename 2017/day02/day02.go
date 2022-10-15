@@ -2,7 +2,6 @@ package day02
 
 import (
 	_ "embed"
-	"strings"
 
 	"github.com/richardc/advent-go/input"
 	"github.com/richardc/advent-go/runner"
@@ -17,16 +16,17 @@ func init() {
 		runner.Solution{
 			Year:  2017,
 			Day:   2,
-			Part1: func(any) any { return solve(puzzle) },
+			Input: func() any { return input.Sheet(puzzle, input.MustAtoi) },
+			Part1: func(i any) any { return checksums(i.([][]int)) },
 		},
 	)
 }
 
-func checksum(line string) int {
-	min, max := slices.MinMax(slices.Map(strings.Fields(line), input.MustAtoi))
+func checksum(row []int) int {
+	min, max := slices.MinMax(row)
 	return max - min
 }
 
-func solve(puzzle string) int {
-	return slices.Sum(slices.Map(input.Lines(puzzle), checksum))
+func checksums(sheet [][]int) int {
+	return slices.Sum(slices.Map(sheet, checksum))
 }
