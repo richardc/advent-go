@@ -27,3 +27,27 @@ func Test_uncaptcha(t *testing.T) {
 		})
 	}
 }
+
+func Test_uncaptcha_half(t *testing.T) {
+	type args struct {
+		puzzle string
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{"1212 = 6", args{"1212"}, 6},
+		{"1221 = 0", args{"1221"}, 0},
+		{"123425 = 4", args{"123425"}, 4},
+		{"123123 = 12", args{"123123"}, 12},
+		{"12131415 = 4", args{"12131415"}, 4},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := uncaptcha_half(tt.args.puzzle); got != tt.want {
+				t.Errorf("uncaptcha_half() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
