@@ -25,3 +25,10 @@ func Signum[T constraints.Signed](n T) T {
 	}
 	return 0
 }
+
+func Abs[T constraints.Signed](n T) T {
+	if n < 0 {
+		return -n
+	}
+	return n
+}

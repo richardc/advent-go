@@ -28,6 +28,7 @@ import (
 	_ "github.com/richardc/advent-go/2015/day25"
 	_ "github.com/richardc/advent-go/2017/day01"
 	_ "github.com/richardc/advent-go/2017/day02"
+	_ "github.com/richardc/advent-go/2017/day03"
 
 	"github.com/richardc/advent-go/runner"
 )
