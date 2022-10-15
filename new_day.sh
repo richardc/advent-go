@@ -30,7 +30,7 @@ func init() {
     runner.Register(
         runner.Solution{
             Year: ${YEAR},
-            Day: $(printf %d DAY),
+            Day: $(printf %d "$DAY"),
             Part1: func(any) any { return solve(puzzle) },
         },
     )
