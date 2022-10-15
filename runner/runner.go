@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"runtime/pprof"
+	"time"
 
 	"golang.org/x/exp/slices"
 )
@@ -20,17 +21,29 @@ type Solution struct {
 }
 
 func (s Solution) Run() {
-	fmt.Println("Day ", s.Day)
+	fmt.Println("Day", s.Day)
 	var input any
 	if s.Input != nil {
+		start := time.Now()
 		input = s.Input()
+		duration := time.Since(start)
+		fmt.Println("    Input ", duration)
 	}
 	if s.Part1 != nil {
-		fmt.Println("    Part 1", s.Part1(input))
+		start := time.Now()
+		result := s.Part1(input)
+		duration := time.Since(start)
+		fmt.Println("    Part 1", result)
+		fmt.Println("          ", duration)
 	}
 	if s.Part2 != nil {
-		fmt.Println("    Part 2", s.Part2(input))
+		start := time.Now()
+		result := s.Part2(input)
+		duration := time.Since(start)
+		fmt.Println("    Part 2", result)
+		fmt.Println("          ", duration)
 	}
+	fmt.Println()
 }
 
 var solutions []Solution
