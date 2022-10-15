@@ -14,6 +14,7 @@ import (
 type Solver func(any) any
 
 type Solution struct {
+	Year  int
 	Day   int
 	Input func() any
 	Part1 Solver
@@ -69,7 +70,7 @@ func Run() {
 		defer pprof.StopCPUProfile()
 	}
 
-	slices.SortFunc(solutions, func(s1, s2 Solution) bool { return s1.Day < s2.Day })
+	slices.SortFunc(solutions, func(s1, s2 Solution) bool { return s1.Year < s2.Year && s1.Day < s2.Day })
 
 	if runall != nil && *runall {
 		for _, s := range solutions {
