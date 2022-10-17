@@ -185,3 +185,11 @@ func Counts[E comparable](s []E) map[E]int {
 	}
 	return counts
 }
+
+func Fold[E any, A any](s []E, init A, f func(A, E) A) A {
+	acc := init
+	for _, v := range s {
+		acc = f(acc, v)
+	}
+	return acc
+}
