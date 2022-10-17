@@ -18,13 +18,14 @@ func init() {
 		runner.Solution{
 			Year:  2017,
 			Day:   6,
-			Part1: func(any) any { return solve(puzzle) },
+			Part1: func(any) any { return steps(puzzle) },
+			Part2: func(any) any { return cycle(puzzle) },
 		},
 	)
 }
 
-func rebalance(memory []int) int {
-	seen := map[string]struct{}{}
+func rebalance(memory []int) (int, int) {
+	seen := map[string]int{}
 	step := 1
 
 	for {
@@ -48,14 +49,20 @@ func rebalance(memory []int) int {
 		}
 
 		key := strings.Join(slices.Map(memory, strconv.Itoa), ", ")
-		if _, ok := seen[key]; ok {
-			return step
+		if when, ok := seen[key]; ok {
+			return step, step - when
 		}
-		seen[key] = struct{}{}
+		seen[key] = step
 		step++
 	}
 }
 
-func solve(puzzle string) int {
-	return rebalance(slices.Map(strings.Fields(puzzle), input.MustAtoi))
+func steps(puzzle string) int {
+	steps, _ := rebalance(slices.Map(strings.Fields(puzzle), input.MustAtoi))
+	return steps
+}
+
+func cycle(puzzle string) int {
+	_, cycle := rebalance(slices.Map(strings.Fields(puzzle), input.MustAtoi))
+	return cycle
 }
