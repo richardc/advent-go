@@ -20,24 +20,24 @@ func init() {
 			Year:  2017,
 			Day:   7,
 			Input: func() any { return buildTree(input.Lines(puzzle)) },
-			Part1: func(i any) any { return i.(Node).name },
+			Part1: func(i any) any { return i.(Node).Name },
 			Part2: func(i any) any { return balanceTree(i.(Node)) },
 		},
 	)
 }
 
 type Node struct {
-	name     string
-	weight   int
-	children []*Node
+	Name     string
+	Weight   int
+	Children []*Node
 }
 
 func newNode(s string) Node {
 	toks := strings.Fields(s)
 	weight := input.MustAtoi(toks[1][1 : len(toks[1])-1])
 	return Node{
-		name:   toks[0],
-		weight: weight,
+		Name:   toks[0],
+		Weight: weight,
 	}
 }
 
@@ -47,7 +47,7 @@ func buildTree(in []string) Node {
 	// Build node objects
 	for _, description := range in {
 		node := newNode(description)
-		nodes[node.name] = &node
+		nodes[node.Name] = &node
 	}
 
 	// Resolve children
@@ -57,7 +57,7 @@ func buildTree(in []string) Node {
 			parent, _, _ := strings.Cut(node, " ")
 			for _, name := range strings.Split(kids, ", ") {
 				child := nodes[name]
-				nodes[parent].children = append(nodes[parent].children, child)
+				nodes[parent].Children = append(nodes[parent].Children, child)
 				children = append(children, name)
 			}
 		}
@@ -75,29 +75,29 @@ func buildTree(in []string) Node {
 	return *maps.Values(nodes)[0]
 }
 
-func (n Node) Weight() int {
-	total := n.weight
-	for _, child := range n.children {
-		total += child.Weight()
+func (n Node) TotalWeight() int {
+	total := n.Weight
+	for _, child := range n.Children {
+		total += child.TotalWeight()
 	}
 	return total
 }
 
 func balanceTree(n Node) int {
-	if len(n.children) == 0 {
+	if len(n.Children) == 0 {
 		// No children, implicitly balanced
 		return 0
 	}
 
 	// Depth first, find imbalanced tree
-	for _, child := range n.children {
+	for _, child := range n.Children {
 		answer := balanceTree(*child)
 		if answer > 0 {
 			return answer
 		}
 	}
 
-	childs := slcs.Map(n.children, func(n *Node) int { return n.Weight() })
+	childs := slcs.Map(n.Children, func(n *Node) int { return n.TotalWeight() })
 	weights := slcs.Counts(childs)
 
 	if len(weights) == 1 {
@@ -113,5 +113,5 @@ func balanceTree(n Node) int {
 	delta := keys[1] - keys[0]
 
 	index := slices.Index(childs, correcting)
-	return n.children[index].weight + delta
+	return n.Children[index].Weight + delta
 }

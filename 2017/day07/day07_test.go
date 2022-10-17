@@ -4,7 +4,7 @@ import (
 	_ "embed"
 	"testing"
 
-	"github.com/go-test/deep"
+	"github.com/google/go-cmp/cmp"
 	"github.com/richardc/advent-go/input"
 )
 
@@ -28,7 +28,7 @@ func Test_buildTree(t *testing.T) {
 					{"jptl", 61, nil},
 				}},
 				{"padx", 45, []*Node{
-					{"pgba", 66, nil},
+					{"pbga", 66, nil},
 					{"havc", 66, nil},
 					{"qoyq", 66, nil},
 				}},
@@ -43,8 +43,8 @@ func Test_buildTree(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := buildTree(tt.args.in)
-			if diff := deep.Equal(got, tt.want); diff != nil {
-				t.Error(diff)
+			if diff := cmp.Diff(got, tt.want); diff != "" {
+				t.Errorf("buildTree() mismatch (-want +got):\n%s", diff)
 			}
 		})
 	}
