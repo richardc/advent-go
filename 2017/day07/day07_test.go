@@ -49,3 +49,23 @@ func Test_buildTree(t *testing.T) {
 		})
 	}
 }
+
+func Test_balanceTree(t *testing.T) {
+	type args struct {
+		n Node
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{"example", args{buildTree(input.Lines(example))}, 60},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := balanceTree(tt.args.n); got != tt.want {
+				t.Errorf("balanceTree() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

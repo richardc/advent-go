@@ -177,3 +177,11 @@ func Reverse[E any](s []E) {
 		s[i], s[j] = s[j], s[i]
 	}
 }
+
+func Counts[E comparable](s []E) map[E]int {
+	counts := map[E]int{}
+	for _, v := range s {
+		counts[v]++
+	}
+	return counts
+}

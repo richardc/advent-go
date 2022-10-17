@@ -6,7 +6,9 @@ import (
 
 	"github.com/richardc/advent-go/input"
 	"github.com/richardc/advent-go/runner"
+	slcs "github.com/richardc/advent-go/slices"
 	"golang.org/x/exp/maps"
+	"golang.org/x/exp/slices"
 )
 
 //go:embed "input.txt"
@@ -19,6 +21,7 @@ func init() {
 			Day:   7,
 			Input: func() any { return buildTree(input.Lines(puzzle)) },
 			Part1: func(i any) any { return i.(Node).name },
+			Part2: func(i any) any { return balanceTree(i.(Node)) },
 		},
 	)
 }
@@ -70,4 +73,45 @@ func buildTree(in []string) Node {
 	}
 
 	return *maps.Values(nodes)[0]
+}
+
+func (n Node) Weight() int {
+	total := n.weight
+	for _, child := range n.children {
+		total += child.Weight()
+	}
+	return total
+}
+
+func balanceTree(n Node) int {
+	if len(n.children) == 0 {
+		// No children, implicitly balanced
+		return 0
+	}
+
+	// Depth first, find imbalanced tree
+	for _, child := range n.children {
+		answer := balanceTree(*child)
+		if answer > 0 {
+			return answer
+		}
+	}
+
+	childs := slcs.Map(n.children, func(n *Node) int { return n.Weight() })
+	weights := slcs.Counts(childs)
+
+	if len(weights) == 1 {
+		// Children are balanced
+		return 0
+	}
+
+	// Rebalance the outlier
+	keys := maps.Keys(weights)
+	slices.SortFunc(keys, func(a, b int) bool { return weights[a] < weights[b] })
+
+	correcting := keys[0]
+	delta := keys[1] - keys[0]
+
+	index := slices.Index(childs, correcting)
+	return n.children[index].weight + delta
 }
