@@ -4,19 +4,19 @@ set -e
 # Small helper to bootstrap a new days solution - errors early
 # to avoid stomping anything you already did
 DAY="${1:-$(date +%d)}"
-DAY="$(printf %02d "$DAY")"
+PADDAY="$(printf %02d "$DAY")"
 YEAR="${2:-$(date +%Y)}"
 
 echo "Bootstrapping ${YEAR} ${DAY}"
 
-mkdir "${YEAR}/day${DAY}"
+mkdir "${YEAR}/day${PADDAY}"
 
 # https://github.com/GreenLightning/advent-of-code-downloader
 # go install github.com/GreenLightning/advent-of-code-downloader/aocdl@latest
-aocdl -year "${YEAR}" -day "${DAY}" -output "${YEAR}/day${DAY}/input.txt"
+aocdl -year "${YEAR}" -day "${DAY}" -output "${YEAR}/day${PADDAY}/input.txt"
 
-cat > "${YEAR}/day${DAY}/day${DAY}.go" << HERE
-package day${DAY}
+cat > "${YEAR}/day${PADDAY}/day${PADDAY}.go" << HERE
+package day${PADDAY}
 
 import (
     _ "embed"
@@ -30,7 +30,7 @@ func init() {
     runner.Register(
         runner.Solution{
             Year: ${YEAR},
-            Day: $(printf %d "$DAY"),
+            Day: ${DAY},
             Part1: func(any) any { return solve(puzzle) },
         },
     )
@@ -41,4 +41,4 @@ func solve(puzzle string) int {
 }
 HERE
 
-go fmt "./${YEAR}/day${DAY}/..."
+go fmt "./${YEAR}/day${PADDAY}/..."
