@@ -32,6 +32,7 @@ import (
 	_ "github.com/richardc/advent-go/2017/day04"
 	_ "github.com/richardc/advent-go/2017/day05"
 	_ "github.com/richardc/advent-go/2017/day06"
+	_ "github.com/richardc/advent-go/2017/day07"
 
 	"github.com/richardc/advent-go/runner"
 )
