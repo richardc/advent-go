@@ -27,3 +27,25 @@ func Test_score(t *testing.T) {
 		})
 	}
 }
+
+func Test_garbage(t *testing.T) {
+	tests := []struct {
+		input string
+		want  int
+	}{
+		{"<>", 0},
+		{"<random characters>", 17},
+		{"<<<<>", 3},
+		{"<{!>}>", 2},
+		{"<!!>", 0},
+		{"<!!!>>", 0},
+		{`<{o"i!a,<{i<a>`, 10},
+	}
+	for _, tt := range tests {
+		t.Run(tt.input, func(t *testing.T) {
+			if got := garbage(tt.input); got != tt.want {
+				t.Errorf("garbage() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
