@@ -26,7 +26,8 @@ func init() {
 func countSet(puzzle string) int {
 	total := 0
 	for row := 0; row < 128; row++ {
-		bits := fmt.Sprintf("%b", knothash.Hash([]byte(fmt.Sprintf("%s-%d", puzzle, row))))
+		hash := knothash.Hash([]byte(fmt.Sprintf("%s-%d", puzzle, row)))
+		bits := strings.Join(slices.Map(hash[:], func(b byte) string { return fmt.Sprintf("%08b", b) }), "")
 		total += len(slices.Filter([]byte(bits), func(c byte) bool { return c == byte('1') }))
 	}
 	return total
