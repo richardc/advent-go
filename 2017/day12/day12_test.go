@@ -27,3 +27,23 @@ func Test_connectedToZero(t *testing.T) {
 		})
 	}
 }
+
+func Test_countSubgraphs(t *testing.T) {
+	type args struct {
+		puzzle string
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{"example", args{example}, 2},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := countSubgraphs(tt.args.puzzle); got != tt.want {
+				t.Errorf("countSubgraphs() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

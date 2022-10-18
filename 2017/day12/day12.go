@@ -2,11 +2,14 @@ package day12
 
 import (
 	_ "embed"
+	"strconv"
 	"strings"
 
 	"github.com/richardc/advent-go/input"
 	"github.com/richardc/advent-go/runner"
-	"github.com/richardc/advent-go/slices"
+	slcs "github.com/richardc/advent-go/slices"
+	"golang.org/x/exp/maps"
+	"golang.org/x/exp/slices"
 )
 
 //go:embed "input.txt"
@@ -18,6 +21,7 @@ func init() {
 			Year:  2017,
 			Day:   12,
 			Part1: func(any) any { return connectedToZero(puzzle) },
+			Part2: func(any) any { return countSubgraphs(puzzle) },
 		},
 	)
 }
@@ -75,5 +79,34 @@ func (n *Node) ConnectsTo(id int) bool {
 func connectedToZero(puzzle string) int {
 	graph := parseNodes(puzzle)
 
-	return len(slices.Filter(graph, func(n *Node) bool { return n.ConnectsTo(0) }))
+	return len(slcs.Filter(graph, func(n *Node) bool { return n.ConnectsTo(0) }))
+}
+
+func (n *Node) Subgraph() string {
+	visited := map[*Node]struct{}{}
+	visited[n] = struct{}{}
+	queue := []*Node{n}
+	for len(queue) > 0 {
+		next := []*Node{}
+		for _, node := range queue {
+			for _, child := range node.Conn {
+				if _, ok := visited[child]; ok {
+					continue
+				}
+				next = append(next, child)
+				visited[child] = struct{}{}
+			}
+		}
+		queue = next
+	}
+
+	graph := slcs.Map(maps.Keys(visited), func(n *Node) string { return strconv.Itoa(n.Id) })
+	slices.Sort(graph)
+	return strings.Join(graph, ",")
+}
+
+func countSubgraphs(puzzle string) int {
+	nodes := parseNodes(puzzle)
+
+	return len(slcs.Unique(slcs.Map(nodes, func(n *Node) string { return n.Subgraph() })))
 }
