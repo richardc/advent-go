@@ -2,10 +2,12 @@ package day13
 
 import (
 	_ "embed"
+	"fmt"
 	"strings"
 
 	"github.com/richardc/advent-go/input"
 	"github.com/richardc/advent-go/runner"
+	"github.com/richardc/advent-go/slices"
 )
 
 //go:embed "input.txt"
@@ -17,83 +19,71 @@ func init() {
 			Year:  2017,
 			Day:   13,
 			Part1: func(any) any { return severityAtTimeZero(puzzle) },
+			Part2: func(any) any { return safeTimeToGo(puzzle) },
 		},
 	)
 }
 
 type Scanner struct {
-	Column    int
-	Max       int
-	Position  int
-	Direction int
+	Column int
+	Max    int
 }
 
 func NewScanner(s string) Scanner {
 	column, max, _ := strings.Cut(s, ": ")
 	return Scanner{
-		Column:    input.MustAtoi(column),
-		Max:       input.MustAtoi(max),
-		Direction: 1,
+		Column: input.MustAtoi(column),
+		Max:    input.MustAtoi(max),
 	}
 }
 
-func (s *Scanner) Tick() {
-	s.Position += s.Direction
-	switch s.Direction {
-	case 1:
-		if s.Position >= s.Max {
-			s.Position = s.Max - 2
-			s.Direction = -1
-		}
-	case -1:
-		if s.Position < 0 {
-			s.Position = 1
-			s.Direction = 1
-		}
-	}
-}
-
-func (s Scanner) AtTop() bool {
-	return s.Position == 0
+func (s Scanner) Position(time int) int {
+	return (time + s.Column) % (2 * (s.Max - 1))
 }
 
 type Firewall struct {
-	Scanners []*Scanner
+	Scanners []Scanner
 }
 
 func NewFirewall(s string) Firewall {
-	lines := input.Lines(s)
-	last := NewScanner(lines[len(lines)-1])
-
-	scanners := make([]*Scanner, last.Column+1)
-	for _, scan := range input.Lines(s) {
-		scanner := NewScanner(scan)
-		scanners[scanner.Column] = &scanner
-	}
-
-	return Firewall{scanners}
+	return Firewall{slices.Map(input.Lines(s), NewScanner)}
 }
 
-func (f *Firewall) Tick() {
-	for _, scanner := range f.Scanners {
-		if scanner != nil {
-			scanner.Tick()
-		}
-	}
-}
-
-func (f Firewall) Severity() int {
+func (f Firewall) Severity(time int) int {
 	total := 0
-	for column, scanner := range f.Scanners {
-		if scanner != nil && scanner.AtTop() {
-			total += column * scanner.Max
+	for _, scanner := range f.Scanners {
+		if scanner.Position(time) == 0 {
+			total += scanner.Column * scanner.Max
 		}
-		f.Tick()
 	}
 	return total
 }
 
+func (f Firewall) Triggered(time int) bool {
+	for _, scanner := range f.Scanners {
+		if scanner.Position(time) == 0 {
+			return true
+		}
+	}
+	return false
+}
+
+func (f Firewall) At(time int) string {
+	return strings.Join(slices.Map(f.Scanners, func(s Scanner) string {
+		return fmt.Sprintf("%d:%d", s.Column, s.Position(time))
+	}), ", ")
+}
+
 func severityAtTimeZero(puzzle string) int {
 	fw := NewFirewall(puzzle)
-	return fw.Severity()
+	return fw.Severity(0)
+}
+
+func safeTimeToGo(puzzle string) int {
+	fw := NewFirewall(puzzle)
+	for time := 0; ; time++ {
+		if !fw.Triggered(time) {
+			return time
+		}
+	}
 }
