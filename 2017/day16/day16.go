@@ -17,6 +17,7 @@ func init() {
 			Year:  2017,
 			Day:   16,
 			Part1: func(any) any { return solve(strings.TrimSpace(puzzle)) },
+			Part2: func(any) any { return solve2(strings.TrimSpace(puzzle)) },
 		},
 	)
 }
@@ -49,4 +50,21 @@ func solve(puzzle string) string {
 	start := "abcdefghijklmnop"
 	moves := strings.Split(puzzle, ",")
 	return dance(start, moves)
+}
+
+func solve2(puzzle string) string {
+	moves := strings.Split(puzzle, ",")
+	start := "abcdefghijklmnop"
+	floor := start
+
+	iterations := 1_000_000_000
+	for i := 0; i < iterations; i++ {
+		floor = dance(floor, moves)
+		if floor == start {
+			period := i + 1
+			skip := iterations / period
+			i += period * (skip - 1)
+		}
+	}
+	return floor
 }
