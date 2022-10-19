@@ -67,8 +67,9 @@ func NewInstr(s string) Instr {
 type Cpu struct {
 	registers map[string]int
 	pc        int
-	playing   int
-	rcv       bool
+	snd       func(int)
+	rcv       func(Value)
+	sleep     bool
 	program   []Instr
 }
 
@@ -83,7 +84,7 @@ func (c *Cpu) Apply(i Instr) {
 	jump := 1
 	switch i.Op {
 	case "snd":
-		c.playing = i.Op1.Eval(c)
+		c.snd(i.Op1.Eval(c))
 	case "set":
 		c.registers[string(i.Op1.(Register))] = i.Op2.Eval(c)
 	case "add":
@@ -93,9 +94,7 @@ func (c *Cpu) Apply(i Instr) {
 	case "mod":
 		c.registers[string(i.Op1.(Register))] %= i.Op2.Eval(c)
 	case "rcv":
-		if i.Op1.Eval(c) != 0 {
-			c.rcv = true
-		}
+		c.rcv(i.Op1)
 	case "jgz":
 		if i.Op1.Eval(c) > 0 {
 			jump = i.Op2.Eval(c)
@@ -105,19 +104,23 @@ func (c *Cpu) Apply(i Instr) {
 }
 
 func (c *Cpu) Run() {
-	for c.pc >= 0 && c.pc <= len(c.program) {
-		c.Apply(c.program[c.pc])
-	}
-}
-
-func (c *Cpu) RunTillRcv() {
-	for c.pc >= 0 && c.pc <= len(c.program) && !c.rcv {
+	for c.pc >= 0 && c.pc <= len(c.program) && !c.sleep {
 		c.Apply(c.program[c.pc])
 	}
 }
 
 func solve(puzzle string) int {
 	cpu := NewCpu(puzzle)
-	cpu.RunTillRcv()
-	return cpu.playing
+
+	playing := 0
+	cpu.snd = func(val int) {
+		if val > 0 {
+			playing = val
+		}
+	}
+	cpu.rcv = func(v Value) {
+		cpu.sleep = true
+	}
+	cpu.Run()
+	return playing
 }
