@@ -2,6 +2,7 @@ package day17
 
 import (
 	_ "embed"
+	"fmt"
 	"strings"
 
 	"github.com/richardc/advent-go/input"
@@ -18,6 +19,7 @@ func init() {
 			Year:  2017,
 			Day:   17,
 			Part1: func(any) any { return valueAfter2017(puzzle) },
+			Part2: func(any) any { return valueAfter50Mil(puzzle) },
 		},
 	)
 }
@@ -37,4 +39,32 @@ func valueAfter2017(puzzle string) int {
 	memory := spinlock(step, 2018)
 	index := slices.Index(memory, 2017) + 1
 	return memory[index]
+}
+
+func valueAfter0After(step, count int) int {
+	memory := spinlock(step, count)
+	index := slices.Index(memory, 0) + 1
+	return memory[index]
+}
+
+func InspectValueAfter0After(puzzle string) int {
+	step := input.MustAtoi(strings.TrimSpace(puzzle))
+	for i := 1; i < 1000; i++ {
+		fmt.Printf("%d %d\n", i, valueAfter0After(step, i))
+	}
+	return -1
+}
+
+func valueAfter50Mil(puzzle string) int {
+	step := input.MustAtoi(strings.TrimSpace(puzzle))
+	value := 0
+	position := 0
+	for i := 1; i < 50_000_001; i++ {
+		position = (position + step + 1) % i
+		if position == 0 {
+			// insert at the start, new neighbour for 0
+			value = i
+		}
+	}
+	return value
 }
