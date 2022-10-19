@@ -19,6 +19,7 @@ func init() {
 			Year:  2017,
 			Day:   18,
 			Part1: func(any) any { return solve(puzzle) },
+			Part2: func(any) any { return duet(puzzle) },
 		},
 	)
 }
@@ -69,8 +70,9 @@ type Cpu struct {
 	pc        int
 	snd       func(int)
 	rcv       func(Value)
-	sleep     bool
+	sleep     string
 	program   []Instr
+	channel   []int
 }
 
 func NewCpu(s string) Cpu {
@@ -103,10 +105,37 @@ func (c *Cpu) Apply(i Instr) {
 	c.pc += jump
 }
 
+func (c Cpu) Runnable() bool {
+	return c.pc >= 0 && c.pc <= len(c.program) && !c.Blocked()
+}
+
 func (c *Cpu) Run() {
-	for c.pc >= 0 && c.pc <= len(c.program) && !c.sleep {
+	for c.Runnable() {
 		c.Apply(c.program[c.pc])
 	}
+}
+
+func (c Cpu) Blocked() bool {
+	return c.sleep != ""
+}
+
+func (c *Cpu) TryWake() {
+	if c.Blocked() && len(c.channel) > 0 {
+		c.registers[c.sleep] = c.channel[0]
+		c.channel = c.channel[1:]
+		c.sleep = ""
+	}
+}
+
+func (c *Cpu) Recv(v Value) {
+	register := string(v.(Register))
+	if len(c.channel) == 0 {
+		c.sleep = register
+		return
+	}
+
+	c.registers[register] = c.channel[0]
+	c.channel = c.channel[1:]
 }
 
 func solve(puzzle string) int {
@@ -119,8 +148,37 @@ func solve(puzzle string) int {
 		}
 	}
 	cpu.rcv = func(v Value) {
-		cpu.sleep = true
+		cpu.sleep = string(v.(Register))
 	}
 	cpu.Run()
 	return playing
+}
+
+func duet(puzzle string) int {
+	cpu0 := NewCpu(puzzle)
+	cpu0.registers["p"] = 0
+	cpu1 := NewCpu(puzzle)
+	cpu1.registers["p"] = 1
+
+	answer := 0
+	cpu0.snd = func(val int) {
+		cpu1.channel = append(cpu1.channel, val)
+	}
+
+	cpu1.snd = func(val int) {
+		answer++
+		cpu0.channel = append(cpu0.channel, val)
+	}
+
+	cpu0.rcv = func(v Value) { cpu0.Recv(v) }
+	cpu1.rcv = func(v Value) { cpu1.Recv(v) }
+
+	for cpu0.Runnable() || cpu1.Runnable() {
+		cpu0.Run()
+		cpu1.Run()
+		cpu0.TryWake()
+		cpu1.TryWake()
+	}
+
+	return answer
 }
