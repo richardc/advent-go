@@ -18,6 +18,7 @@ func init() {
 			Day:   19,
 			Input: func() any { return NewMaze(puzzle) },
 			Part1: func(i any) any { return visited(i.(Maze)) },
+			Part2: func(i any) any { return steps(i.(Maze)) },
 		},
 	)
 }
@@ -47,6 +48,16 @@ const (
 )
 
 func visited(maze Maze) string {
+	visited, _ := visitor(maze)
+	return visited
+}
+
+func steps(maze Maze) int {
+	_, steps := visitor(maze)
+	return steps
+}
+
+func visitor(maze Maze) (string, int) {
 	seen := []byte{}
 	direction := down
 	x, y := 0, 0
@@ -56,6 +67,7 @@ func visited(maze Maze) string {
 		}
 	}
 
+	steps := 1
 walk:
 	for {
 		switch direction {
@@ -93,8 +105,8 @@ walk:
 				}
 			}
 		}
-
+		steps++
 	}
 
-	return string(seen)
+	return string(seen), steps
 }

@@ -27,3 +27,23 @@ func Test_visited(t *testing.T) {
 		})
 	}
 }
+
+func Test_steps(t *testing.T) {
+	type args struct {
+		maze Maze
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{"example", args{NewMaze(example)}, 38},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := steps(tt.args.maze); got != tt.want {
+				t.Errorf("steps() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
