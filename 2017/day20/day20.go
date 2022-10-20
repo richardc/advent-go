@@ -19,7 +19,8 @@ func init() {
 			Year:  2017,
 			Day:   20,
 			Input: func() any { return slices.Map(input.Lines(puzzle), NewParticle) },
-			Part1: func(i any) any { return staysClosest(i.([]Particle)) },
+			Part1: func(i any) any { return staysClosest(i.([]*Particle)) },
+			Part2: func(i any) any { return survivingPopulation(i.([]*Particle)) },
 		},
 	)
 }
@@ -41,23 +42,35 @@ func (v Vector) Distance(other Vector) int {
 	return math.Abs(v.X-other.X) + math.Abs(v.Y-other.Y) + math.Abs(v.Z-other.Z)
 }
 
+func (v *Vector) Add(other Vector) {
+	v.X += other.X
+	v.Y += other.Y
+	v.Z += other.Z
+}
+
 type Particle struct {
 	Position     Vector
 	Velocity     Vector
 	Acceleration Vector
+	Destroyed    bool
 }
 
-func NewParticle(s string) Particle {
+func NewParticle(s string) *Particle {
 	toks := strings.Split(s, ", ")
-	return Particle{
+	return &Particle{
 		Position:     NewVector(toks[0]),
 		Velocity:     NewVector(toks[1]),
 		Acceleration: NewVector(toks[2]),
 	}
 }
 
+func (p *Particle) Tick() {
+	p.Velocity.Add(p.Acceleration)
+	p.Position.Add(p.Velocity)
+}
+
 // Over time, the dominating factor is the Acceleration
-func staysClosest(particles []Particle) int {
+func staysClosest(particles []*Particle) int {
 	index := 0
 	zero := Vector{}
 	max := particles[0].Acceleration.Distance(zero)
@@ -69,4 +82,28 @@ func staysClosest(particles []Particle) int {
 		}
 	}
 	return index
+}
+
+func survivingPopulation(particles []*Particle) int {
+	// Simulate for 1000 rounds, hope that's enough
+	for i := 0; i < 1000; i++ {
+		collisions := map[Vector]*Particle{}
+		for _, p := range particles {
+			if p.Destroyed {
+				continue
+			}
+			p.Tick()
+		}
+		for _, p := range particles {
+			if p.Destroyed {
+				continue
+			}
+			if other, ok := collisions[p.Position]; ok {
+				other.Destroyed = true
+				p.Destroyed = true
+			}
+			collisions[p.Position] = p
+		}
+	}
+	return len(slices.Filter(particles, func(p *Particle) bool { return !p.Destroyed }))
 }

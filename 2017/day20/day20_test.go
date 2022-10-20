@@ -7,14 +7,14 @@ import (
 
 func Test_staysClosest(t *testing.T) {
 	type args struct {
-		particles []Particle
+		particles []*Particle
 	}
 	tests := []struct {
 		name string
 		args args
 		want int
 	}{
-		{"example", args{[]Particle{
+		{"example", args{[]*Particle{
 			NewParticle("p=<3,0,0>, v=<2,0,0>, a=<-1,0,0>"),
 			NewParticle("p=<4,0,0>, v=<0,0,0>, a=<-2,0,0>"),
 		}}, 0},
