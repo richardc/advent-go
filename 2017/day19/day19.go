@@ -5,7 +5,6 @@ import (
 
 	"github.com/richardc/advent-go/input"
 	"github.com/richardc/advent-go/runner"
-	"github.com/richardc/advent-go/slices"
 )
 
 //go:embed "input.txt"
@@ -30,12 +29,6 @@ func NewMaze(s string) Maze {
 	lines := input.Lines(s)
 	for _, line := range lines {
 		maze = append(maze, []byte(line))
-	}
-
-	// Pad spaced - example.txt keeps getting eaten by editor
-	longest := slices.Max(slices.Map(maze, func(l []byte) int { return len(l) }))
-	for i := range maze {
-		maze[i] = append(maze[i], slices.Map(slices.Range(0, 1+longest-len(maze[i])), func(i int) byte { return byte(' ') })...)
 	}
 	return maze
 }
