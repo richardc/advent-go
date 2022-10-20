@@ -193,3 +193,11 @@ func Fold[E any, A any](s []E, init A, f func(A, E) A) A {
 	}
 	return acc
 }
+
+func Range[E constraints.Integer](start, end E) []E {
+	r := make([]E, end-start)
+	for i := start; i < end; i++ {
+		r[i] = i
+	}
+	return r
+}
