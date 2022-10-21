@@ -15,7 +15,8 @@ func init() {
 		runner.Solution{
 			Year:  2017,
 			Day:   22,
-			Part1: func(any) any { return burstsAfter(puzzle, 10_000) },
+			Part1: func(any) any { return burstsAfter(puzzle, Alpha{}, 10_000) },
+			Part2: func(any) any { return burstsAfter(puzzle, Omega{}, 10_000_000) },
 		},
 	)
 }
@@ -27,46 +28,48 @@ const (
 	Right
 	Down
 	Left
-	Max
+	MaxDirection
 )
 
 type Point struct {
 	X, Y int
 }
 
+type State int
+
+const (
+	Clean State = iota
+	Weakened
+	Infected
+	Flagged
+)
+
 type Game struct {
 	Position   Point
 	Facing     Direction
-	Infected   map[Point]struct{}
+	Cells      map[Point]State
 	Infections int
 }
 
 func NewGame(s string) Game {
-	infected := map[Point]struct{}{}
+	cells := map[Point]State{}
 	lines := input.Lines(s)
 	midpoint := len(lines) / 2
 	for y, line := range lines {
 		for x, b := range []byte(line) {
 			if b == byte('#') {
-				infected[Point{x - midpoint, y - midpoint}] = struct{}{}
+				cells[Point{x - midpoint, y - midpoint}] = Infected
 			}
 		}
 	}
 	return Game{
-		Infected: infected,
+		Cells: cells,
 	}
 }
 
-func (g *Game) Burst() {
-	if _, ok := g.Infected[g.Position]; ok {
-		g.Facing++
-		delete(g.Infected, g.Position)
-	} else {
-		g.Facing--
-		g.Infected[g.Position] = struct{}{}
-		g.Infections++
-	}
-	g.Facing = (g.Facing + Max) % Max
+func (g *Game) Burst(virus Virus) {
+	virus.Burst(g)
+	g.Facing = (g.Facing + MaxDirection) % MaxDirection
 	switch g.Facing {
 	case Up:
 		g.Position.Y--
@@ -79,10 +82,47 @@ func (g *Game) Burst() {
 	}
 }
 
-func burstsAfter(puzzle string, bursts int) int {
+type Virus interface {
+	Burst(*Game)
+}
+
+type Alpha struct{}
+
+func (Alpha) Burst(g *Game) {
+	switch g.Cells[g.Position] {
+	case Infected:
+		g.Facing++
+		delete(g.Cells, g.Position)
+	case Clean:
+		g.Facing--
+		g.Cells[g.Position] = Infected
+		g.Infections++
+	}
+}
+
+type Omega struct{}
+
+func (Omega) Burst(g *Game) {
+	switch g.Cells[g.Position] {
+	case Clean:
+		g.Facing--
+		g.Cells[g.Position] = Weakened
+	case Weakened:
+		g.Cells[g.Position] = Infected
+		g.Infections++
+	case Infected:
+		g.Facing++
+		g.Cells[g.Position] = Flagged
+	case Flagged:
+		g.Facing += 2
+		g.Cells[g.Position] = Clean
+	}
+}
+
+func burstsAfter(puzzle string, virus Virus, bursts int) int {
 	game := NewGame(puzzle)
 	for i := 0; i < bursts; i++ {
-		game.Burst()
+		game.Burst(virus)
 	}
 	return game.Infections
 }

@@ -21,9 +21,9 @@ func TestNewGame(t *testing.T) {
 		want Game
 	}{
 		{"example", args{example}, Game{
-			Infected: map[Point]struct{}{
-				{-1, 0}: {},
-				{1, -1}: {},
+			Cells: map[Point]State{
+				{-1, 0}: Infected,
+				{1, -1}: Infected,
 			},
 			Facing: Up,
 		}},
@@ -47,16 +47,16 @@ func TestGame_Burst(t *testing.T) {
 			Position:   Point{-1, 0},
 			Facing:     Left,
 			Infections: 1,
-			Infected: map[Point]struct{}{
-				{-1, 0}: {},
-				{0, 0}:  {},
-				{1, -1}: {},
+			Cells: map[Point]State{
+				{-1, 0}: Infected,
+				{0, 0}:  Infected,
+				{1, -1}: Infected,
 			},
 		}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tt.game.Burst()
+			tt.game.Burst(Alpha{})
 			if diff := cmp.Diff(tt.game, tt.want); diff != "" {
 				t.Errorf("Game.Burst() mismatch (-want +got):\n%s", diff)
 			}
@@ -67,6 +67,7 @@ func TestGame_Burst(t *testing.T) {
 func Test_burstsAfter(t *testing.T) {
 	type args struct {
 		puzzle string
+		virus  Virus
 		bursts int
 	}
 	tests := []struct {
@@ -74,12 +75,14 @@ func Test_burstsAfter(t *testing.T) {
 		args args
 		want int
 	}{
-		{"example 70==41", args{example, 70}, 41},
-		{"example 10000==5587", args{example, 10_000}, 5_587},
+		{"alpha 70==41", args{example, Alpha{}, 70}, 41},
+		{"alpha 10000==5587", args{example, Alpha{}, 10_000}, 5_587},
+		{"omega 70==41", args{example, Omega{}, 100}, 26},
+		{"omega 10000==5587", args{example, Omega{}, 10_000_000}, 2_511_944},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := burstsAfter(tt.args.puzzle, tt.args.bursts); got != tt.want {
+			if got := burstsAfter(tt.args.puzzle, tt.args.virus, tt.args.bursts); got != tt.want {
 				t.Errorf("burstsAfter() = %v, want %v", got, tt.want)
 			}
 		})
