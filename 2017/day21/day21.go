@@ -19,7 +19,8 @@ func init() {
 			Year:  2017,
 			Day:   21,
 			Input: func() any { return NewRules(puzzle) },
-			Part1: func(i any) any { return countPixels(i.(Rules), 5) },
+			Part1: func(i any) any { return countPixels(i.(Rules), 5, false) },
+			Part2: func(i any) any { return countPixels(i.(Rules), 18, false) },
 		},
 	)
 }
@@ -31,7 +32,6 @@ func NewRules(s string) Rules {
 	for _, l := range input.Lines(s) {
 		from, to, _ := strings.Cut(l, " => ")
 		for _, game := range NewGameFrom(from).Rotations() {
-			fmt.Println(game, "----")
 			rules[game.String()] = NewGameFrom(to)
 		}
 	}
@@ -174,12 +174,16 @@ func (g Game) CountLit() int {
 	return len(slices.Filter(g.Data, func(b byte) bool { return b == byte('#') }))
 }
 
-func countPixels(r Rules, iter int) int {
+func countPixels(r Rules, iter int, draw bool) int {
 	game := NewGame()
-	fmt.Println(game)
+	if draw {
+		fmt.Println(game)
+	}
 	for i := 0; i < iter; i++ {
 		game.Step(r)
-		fmt.Println(game)
+		if draw {
+			fmt.Println(game)
+		}
 	}
 	return game.CountLit()
 }

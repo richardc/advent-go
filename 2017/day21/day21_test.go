@@ -66,7 +66,7 @@ func Test_countPixels(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := countPixels(tt.args.r, tt.args.iter); got != tt.want {
+			if got := countPixels(tt.args.r, tt.args.iter, false); got != tt.want {
 				t.Errorf("countPixels() = %v, want %v", got, tt.want)
 			}
 		})
