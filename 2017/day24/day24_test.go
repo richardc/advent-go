@@ -10,18 +10,18 @@ var example string
 
 func Test_strongestBridge(t *testing.T) {
 	type args struct {
-		puzzle string
+		chains []Chain
 	}
 	tests := []struct {
 		name string
 		args args
 		want int
 	}{
-		{"example", args{example}, 31},
+		{"example", args{makeChains(example)}, 31},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := strongestBridge(tt.args.puzzle); got != tt.want {
+			if got := strongestBridge(tt.args.chains); got != tt.want {
 				t.Errorf("strongestBridge() = %v, want %v", got, tt.want)
 			}
 		})

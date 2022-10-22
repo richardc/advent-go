@@ -18,7 +18,9 @@ func init() {
 		runner.Solution{
 			Year:  2017,
 			Day:   24,
-			Part1: func(any) any { return strongestBridge(puzzle) },
+			Input: func() any { return makeChains(puzzle) },
+			Part1: func(i any) any { return strongestBridge(i.([]Chain)) },
+			Part2: func(i any) any { return longestStrongestBridge(i.([]Chain)) },
 		},
 	)
 }
@@ -95,7 +97,12 @@ func (c Chain) Strength() int {
 	return slices.Sum(slices.Map(c.Links, Section.Value))
 }
 
-func makeChains(sections []Section) []Chain {
+func (c Chain) Length() int {
+	return len(c.Links)
+}
+
+func makeChains(puzzle string) []Chain {
+	sections := slices.Map(input.Lines(puzzle), NewSection)
 	var chains []Chain
 	queue := []Chain{{}}
 	for {
@@ -112,9 +119,12 @@ func makeChains(sections []Section) []Chain {
 	return chains
 }
 
-func strongestBridge(puzzle string) int {
-	sections := slices.Map(input.Lines(puzzle), NewSection)
-	chains := makeChains(sections)
-	// fmt.Println(chains)
+func strongestBridge(chains []Chain) int {
 	return slices.Max(slices.Map(chains, Chain.Strength))
+}
+
+func longestStrongestBridge(chains []Chain) int {
+	maxLength := slices.Max(slices.Map(chains, Chain.Length))
+	longChains := slices.Filter(chains, func(c Chain) bool { return maxLength == c.Length() })
+	return strongestBridge(longChains)
 }
