@@ -2,6 +2,7 @@ package day23
 
 import (
 	_ "embed"
+	"math/big"
 	"strconv"
 	"strings"
 
@@ -19,6 +20,7 @@ func init() {
 			Year:  2017,
 			Day:   18,
 			Part1: func(any) any { return debugMulCalled(puzzle) },
+			Part2: func(any) any { return findNonPrimes(puzzle) },
 		},
 	)
 }
@@ -113,4 +115,24 @@ func debugMulCalled(puzzle string) int {
 
 	cpu.Run()
 	return cpu.mulCalled
+}
+
+func findNonPrimes(puzzle string) int {
+	cpu := NewCpu(puzzle)
+	stride := -cpu.program[len(cpu.program)-2].Op2.Eval(&cpu)
+	cpu.program = cpu.program[:8]
+	cpu.registers["a"] = 1
+	cpu.Run()
+
+	from := cpu.registers["b"]
+	to := cpu.registers["c"]
+
+	count := 0
+	for p := from; p <= to; p += stride {
+		if !big.NewInt(int64(p)).ProbablyPrime(0) {
+			count++
+		}
+	}
+
+	return count
 }
