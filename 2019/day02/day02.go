@@ -18,6 +18,7 @@ func init() {
 			Year:  2019,
 			Day:   2,
 			Part1: func(any) any { return solve(puzzle) },
+			Part2: func(any) any { return solve2(puzzle) },
 		},
 	)
 }
@@ -42,4 +43,18 @@ func solve(puzzle string) int {
 	program[1] = 12
 	program[2] = 2
 	return runIntcode(program)
+}
+
+func solve2(puzzle string) int {
+	for i := 0; i < 100; i++ {
+		for j := 0; j < 100; j++ {
+			program := slices.Map(strings.Split(strings.Trim(puzzle, "\n"), ","), input.MustAtoi)
+			program[1] = i
+			program[2] = j
+			if runIntcode(program) == 19690720 {
+				return i*100 + j
+			}
+		}
+	}
+	return -1
 }
