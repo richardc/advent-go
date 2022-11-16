@@ -7,6 +7,7 @@ import (
 
 	"github.com/richardc/advent-go/input"
 	"github.com/richardc/advent-go/runner"
+	"github.com/richardc/advent-go/slices"
 )
 
 //go:embed "input.txt"
@@ -18,6 +19,7 @@ func init() {
 			Year:  2019,
 			Day:   4,
 			Part1: func(any) any { return solve(puzzle) },
+			Part2: func(any) any { return solve2(puzzle) },
 		},
 	)
 }
@@ -25,6 +27,16 @@ func init() {
 func doubleChar(password string) bool {
 	for i := 0; i < 5; i++ {
 		if password[i] == password[i+1] {
+			return true
+		}
+	}
+	return false
+}
+
+func justDoubleChar(password string) bool {
+	groups := slices.GroupBy([]byte(password))
+	for _, group := range groups {
+		if len(group.Group) == 2 {
 			return true
 		}
 	}
@@ -51,6 +63,23 @@ func solve(puzzle string) int {
 	count := 0
 	for i := min; i < max; i++ {
 		if validPassword(fmt.Sprintf("%d", i)) {
+			count++
+		}
+	}
+	return count
+}
+
+func validPassword2(password string) bool {
+	return justDoubleChar(password) && increasing(password)
+}
+
+func solve2(puzzle string) int {
+	mins, maxs, _ := strings.Cut(strings.Trim(puzzle, "\n"), "-")
+	min := input.MustAtoi(mins)
+	max := input.MustAtoi(maxs)
+	count := 0
+	for i := min; i < max; i++ {
+		if validPassword2(fmt.Sprintf("%d", i)) {
 			count++
 		}
 	}
