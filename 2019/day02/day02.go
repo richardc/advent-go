@@ -2,11 +2,9 @@ package day02
 
 import (
 	_ "embed"
-	"strings"
 
-	"github.com/richardc/advent-go/input"
+	"github.com/richardc/advent-go/2019/intcode"
 	"github.com/richardc/advent-go/runner"
-	"github.com/richardc/advent-go/slices"
 )
 
 //go:embed "input.txt"
@@ -23,35 +21,23 @@ func init() {
 	)
 }
 
-func runIntcode(memory []int) int {
-	i := 0
-	for {
-		switch memory[i] {
-		case 1:
-			memory[memory[i+3]] = memory[memory[i+1]] + memory[memory[i+2]]
-		case 2:
-			memory[memory[i+3]] = memory[memory[i+1]] * memory[memory[i+2]]
-		case 99:
-			return memory[0]
-		}
-		i += 4
-	}
-}
-
 func solve(puzzle string) int {
-	program := slices.Map(strings.Split(strings.Trim(puzzle, "\n"), ","), input.MustAtoi)
-	program[1] = 12
-	program[2] = 2
-	return runIntcode(program)
+	program := intcode.NewInterpreter(puzzle)
+	program.Set(1, 12)
+	program.Set(2, 2)
+	program.Run()
+	return program.Get(0)
 }
 
 func solve2(puzzle string) int {
+	program := intcode.NewInterpreter(puzzle)
 	for i := 0; i < 100; i++ {
 		for j := 0; j < 100; j++ {
-			program := slices.Map(strings.Split(strings.Trim(puzzle, "\n"), ","), input.MustAtoi)
-			program[1] = i
-			program[2] = j
-			if runIntcode(program) == 19690720 {
+			run := program.Clone()
+			run.Set(1, i)
+			run.Set(2, j)
+			run.Run()
+			if run.Get(0) == 19690720 {
 				return i*100 + j
 			}
 		}
