@@ -15,14 +15,15 @@ func init() {
 		runner.Solution{
 			Year:  2019,
 			Day:   5,
-			Part1: func(any) any { return solve(puzzle) },
+			Part1: func(any) any { return solve(puzzle, 1) },
+			Part2: func(any) any { return solve(puzzle, 5) },
 		},
 	)
 }
 
-func solve(puzzle string) int {
+func solve(puzzle string, input int) int {
 	cpu := intcode.NewCpu(puzzle)
-	cpu.Input([]int{1})
+	cpu.Input([]int{input})
 	cpu.Run()
 	output := cpu.Output()
 	return output[len(output)-1]

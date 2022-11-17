@@ -66,6 +66,32 @@ func (c *Cpu) Step() {
 	case 4: // Output
 		c.output = append(c.output, c.Argument(1))
 		c.pc += 2
+	case 5: // Jump if true
+		if c.Argument(1) != 0 {
+			c.pc = c.Argument(2)
+		} else {
+			c.pc += 3
+		}
+	case 6: // Jump if false
+		if c.Argument(1) == 0 {
+			c.pc = c.Argument(2)
+		} else {
+			c.pc += 3
+		}
+	case 7: // Less than
+		if c.Argument(1) < c.Argument(2) {
+			c.memory[c.memory[c.pc+3]] = 1
+		} else {
+			c.memory[c.memory[c.pc+3]] = 0
+		}
+		c.pc += 4
+	case 8: // Equals
+		if c.Argument(1) == c.Argument(2) {
+			c.memory[c.memory[c.pc+3]] = 1
+		} else {
+			c.memory[c.memory[c.pc+3]] = 0
+		}
+		c.pc += 4
 	case 99: // Halt
 		c.halted = true
 	default:
