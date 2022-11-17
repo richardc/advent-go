@@ -6,6 +6,8 @@ import (
 
 	"github.com/richardc/advent-go/input"
 	"github.com/richardc/advent-go/runner"
+	"github.com/richardc/advent-go/slices"
+	"golang.org/x/exp/maps"
 )
 
 //go:embed "input.txt"
@@ -18,6 +20,7 @@ func init() {
 			Day:   6,
 			Input: func() any { return newStarmap(puzzle) },
 			Part1: func(i any) any { return i.(Starmap).Orbits() },
+			Part2: func(i any) any { return i.(Starmap).Transfers() },
 		},
 	)
 }
@@ -57,4 +60,30 @@ func (s Starmap) Orbits() int {
 		total += s.Orbit(body)
 	}
 	return total
+}
+
+func (s Starmap) Parents(body string) map[string]int {
+	path := map[string]int{}
+	steps := 0
+	for {
+		if parent, ok := s.orbits[body]; ok {
+			body = parent
+			path[body] = steps
+			steps++
+		} else {
+			return path
+		}
+	}
+}
+
+func (s Starmap) Transfers() int {
+	you := s.Parents("YOU")
+	san := s.Parents("SAN")
+	common := map[string]int{}
+	for body, steps := range you {
+		if santa, ok := san[body]; ok {
+			common[body] = steps + santa
+		}
+	}
+	return slices.Min(maps.Values(common))
 }
