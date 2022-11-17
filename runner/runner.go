@@ -8,6 +8,7 @@ import (
 	"runtime/pprof"
 	"time"
 
+	slcs "github.com/richardc/advent-go/slices"
 	"golang.org/x/exp/slices"
 )
 
@@ -55,7 +56,9 @@ func Register(s Solution) {
 
 func Run() {
 	cpuprofile := flag.String("cpuprofile", "", "PATH")
-	runall := flag.Bool("all", false, "Runs all options")
+	runall := flag.Bool("all", false, "Runs all days solutions")
+	day := flag.Int("day", 0, "Day to run")
+	year := flag.Int("year", 0, "Year to run")
 	flag.Parse()
 
 	if cpuprofile != nil && *cpuprofile != "" {
@@ -72,7 +75,18 @@ func Run() {
 
 	slices.SortFunc(solutions, func(s1, s2 Solution) bool { return s1.Year < s2.Year && s1.Day < s2.Day })
 
-	if runall != nil && *runall {
+	filtered := false
+	if year != nil && *year != 0 {
+		solutions = slcs.Filter(solutions, func(s Solution) bool { return s.Year == *year })
+		filtered = true
+	}
+
+	if day != nil && *day != 0 {
+		solutions = slcs.Filter(solutions, func(s Solution) bool { return s.Day == *day })
+		filtered = true
+	}
+
+	if (runall != nil && *runall) || filtered {
 		for _, s := range solutions {
 			s.Run()
 		}
