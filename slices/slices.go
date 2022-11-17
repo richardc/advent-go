@@ -201,3 +201,21 @@ func Range[E constraints.Integer](start, end E) []E {
 	}
 	return r
 }
+
+func Any[E any](s []E, f func(E) bool) bool {
+	for _, v := range s {
+		if f(v) {
+			return true
+		}
+	}
+	return false
+}
+
+func All[E any](s []E, f func(E) bool) bool {
+	for _, v := range s {
+		if !f(v) {
+			return false
+		}
+	}
+	return true
+}

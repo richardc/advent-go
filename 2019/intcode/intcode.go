@@ -9,11 +9,13 @@ import (
 )
 
 type Cpu struct {
-	memory []int
-	input  []int
-	output []int
-	pc     int
-	halted bool
+	memory      []int
+	input       []int
+	output      []int
+	output_func func(int)
+	pc          int
+	halted      bool
+	blocked     bool
 }
 
 func NewCpu(program string) Cpu {
@@ -28,6 +30,19 @@ func (c *Cpu) Clone() Cpu {
 		pc:     c.pc,
 		halted: c.halted,
 	}
+}
+
+func (c *Cpu) Reset(other *Cpu) {
+	c.pc = 0
+	c.halted = false
+	c.blocked = false
+	c.input = []int{}
+	c.output = []int{}
+	c.memory = append([]int{}, other.memory...)
+}
+
+func (c *Cpu) OutputFunc(f func(int)) {
+	c.output_func = f
 }
 
 func (c *Cpu) Argument(offset int) int {
@@ -60,11 +75,19 @@ func (c *Cpu) Step() {
 		c.memory[c.memory[c.pc+3]] = c.Argument(1) * c.Argument(2)
 		c.pc += 4
 	case 3: // Input
-		c.memory[c.memory[c.pc+1]] = c.input[0]
-		c.input = c.input[1:]
-		c.pc += 2
+		if len(c.input) > 0 {
+			c.memory[c.memory[c.pc+1]] = c.input[0]
+			c.input = c.input[1:]
+			c.pc += 2
+		} else {
+			c.blocked = true
+		}
 	case 4: // Output
-		c.output = append(c.output, c.Argument(1))
+		if c.output_func != nil {
+			c.output_func(c.Argument(1))
+		} else {
+			c.output = append(c.output, c.Argument(1))
+		}
 		c.pc += 2
 	case 5: // Jump if true
 		if c.Argument(1) != 0 {
@@ -103,6 +126,10 @@ func (c *Cpu) Halted() bool {
 	return c.halted
 }
 
+func (c *Cpu) Blocked() bool {
+	return c.blocked
+}
+
 func (c *Cpu) Set(index, value int) {
 	c.memory[index] = value
 }
@@ -112,13 +139,14 @@ func (c *Cpu) Get(index int) int {
 }
 
 func (c *Cpu) Run() {
-	for !c.Halted() {
+	for !c.Blocked() && !c.Halted() {
 		c.Step()
 	}
 }
 
 func (c *Cpu) Input(input []int) {
 	c.input = append(c.input, input...)
+	c.blocked = false
 }
 
 func (c *Cpu) Output() []int {
