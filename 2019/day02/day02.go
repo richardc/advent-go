@@ -22,7 +22,7 @@ func init() {
 }
 
 func solve(puzzle string) int {
-	program := intcode.NewInterpreter(puzzle)
+	program := intcode.NewCpu(puzzle)
 	program.Set(1, 12)
 	program.Set(2, 2)
 	program.Run()
@@ -30,7 +30,7 @@ func solve(puzzle string) int {
 }
 
 func solve2(puzzle string) int {
-	program := intcode.NewInterpreter(puzzle)
+	program := intcode.NewCpu(puzzle)
 	for i := 0; i < 100; i++ {
 		for j := 0; j < 100; j++ {
 			run := program.Clone()
