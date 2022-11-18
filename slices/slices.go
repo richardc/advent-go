@@ -67,6 +67,19 @@ func Product[E constraints.Integer | constraints.Float](s []E) E {
 	return total
 }
 
+func MinBy[E any, O constraints.Ordered](s []E, f func(E) O) E {
+	min := s[0]
+	minMapped := f(s[0])
+	for _, v := range s[1:] {
+		mapped := f(v)
+		if mapped < minMapped {
+			minMapped = mapped
+			min = v
+		}
+	}
+	return min
+}
+
 func Min[E constraints.Ordered](s []E) E {
 	min := s[0]
 	for _, v := range s {

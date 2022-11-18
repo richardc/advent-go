@@ -58,6 +58,7 @@ import (
 	_ "github.com/richardc/advent-go/2019/day05"
 	_ "github.com/richardc/advent-go/2019/day06"
 	_ "github.com/richardc/advent-go/2019/day07"
+	_ "github.com/richardc/advent-go/2019/day08"
 
 	"github.com/richardc/advent-go/runner"
 )
