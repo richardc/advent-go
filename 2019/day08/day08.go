@@ -20,6 +20,7 @@ func init() {
 				return &image
 			},
 			Part1: func(i any) any { return i.(*Image).checksum() },
+			Part2: func(i any) any { return i.(*Image).decode() },
 		},
 	)
 }
@@ -59,4 +60,26 @@ func newImage(width, height int, data string) Image {
 func (i *Image) checksum() int {
 	layer := slices.MinBy(i.layers, func(l Layer) int { return l.Count('0') })
 	return layer.Count('1') * layer.Count('2')
+}
+
+func (i *Image) decode() string {
+	output := []byte{'\n'}
+	for h := 0; h < i.height; h++ {
+		for w := 0; w < i.width; w++ {
+			offset := h*i.width + w
+		scan:
+			for _, layer := range i.layers {
+				switch layer.data[offset] {
+				case '0':
+					output = append(output, ' ')
+					break scan
+				case '1':
+					output = append(output, '#')
+					break scan
+				}
+			}
+		}
+		output = append(output, '\n')
+	}
+	return string(output)
 }
