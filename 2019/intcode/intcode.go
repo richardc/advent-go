@@ -6,46 +6,65 @@ import (
 
 	"github.com/richardc/advent-go/input"
 	"github.com/richardc/advent-go/slices"
+	"golang.org/x/exp/maps"
 )
 
 type Cpu struct {
-	memory      []int
-	input       []int
-	output      []int
-	output_func func(int)
-	pc          int
-	halted      bool
-	blocked     bool
+	memory       map[int]int
+	input        []int
+	output       []int
+	outputFunc   func(int)
+	pc           int
+	relativeBase int
+	halted       bool
+	blocked      bool
 }
 
-func NewCpu(program string) Cpu {
+func New(program string) Cpu {
+	memory := map[int]int{}
+	for k, v := range slices.Map(strings.Split(strings.Trim(program, "\n"), ","), input.MustAtoi) {
+		memory[k] = v
+	}
 	return Cpu{
-		memory: slices.Map(strings.Split(strings.Trim(program, "\n"), ","), input.MustAtoi),
+		memory: memory,
 	}
 }
 
 func (c *Cpu) Clone() Cpu {
+	memory := map[int]int{}
+	for k, v := range c.memory {
+		memory[k] = v
+	}
 	return Cpu{
-		memory: append([]int{}, c.memory...),
+		memory: memory,
 		pc:     c.pc,
 		halted: c.halted,
 	}
 }
 
 func (c *Cpu) Reset(other *Cpu) {
+	memory := map[int]int{}
+	for k, v := range other.memory {
+		memory[k] = v
+	}
 	c.pc = 0
+	c.relativeBase = 0
 	c.halted = false
 	c.blocked = false
 	c.input = []int{}
 	c.output = []int{}
-	c.memory = append([]int{}, other.memory...)
+	c.memory = memory
 }
 
 func (c *Cpu) OutputFunc(f func(int)) {
-	c.output_func = f
+	c.outputFunc = f
 }
 
 func (c *Cpu) Argument(offset int) int {
+	return c.memory[c.Address(offset)]
+}
+
+func (c *Cpu) Address(offset int) int {
 	op := c.memory[c.pc]
 	digits := []byte(strconv.FormatInt(int64(op), 10))
 	slices.Reverse(digits)
@@ -57,11 +76,13 @@ func (c *Cpu) Argument(offset int) int {
 	}
 	switch mode {
 	case '0': // position
-		return c.memory[c.memory[c.pc+offset]]
-	case '1': // immediate
 		return c.memory[c.pc+offset]
+	case '1': // immediate
+		return c.pc + offset
+	case '2': // relative
+		return c.memory[c.pc+offset] + c.relativeBase
 	}
-	return 0
+	return -1
 }
 
 func (c *Cpu) Step() {
@@ -69,22 +90,22 @@ func (c *Cpu) Step() {
 	opcode := op % 100
 	switch opcode {
 	case 1: // Add
-		c.memory[c.memory[c.pc+3]] = c.Argument(1) + c.Argument(2)
+		c.memory[c.Address(3)] = c.Argument(1) + c.Argument(2)
 		c.pc += 4
 	case 2: // Mul
-		c.memory[c.memory[c.pc+3]] = c.Argument(1) * c.Argument(2)
+		c.memory[c.Address(3)] = c.Argument(1) * c.Argument(2)
 		c.pc += 4
 	case 3: // Input
 		if len(c.input) > 0 {
-			c.memory[c.memory[c.pc+1]] = c.input[0]
+			c.memory[c.Address(1)] = c.input[0]
 			c.input = c.input[1:]
 			c.pc += 2
 		} else {
 			c.blocked = true
 		}
 	case 4: // Output
-		if c.output_func != nil {
-			c.output_func(c.Argument(1))
+		if c.outputFunc != nil {
+			c.outputFunc(c.Argument(1))
 		} else {
 			c.output = append(c.output, c.Argument(1))
 		}
@@ -103,18 +124,21 @@ func (c *Cpu) Step() {
 		}
 	case 7: // Less than
 		if c.Argument(1) < c.Argument(2) {
-			c.memory[c.memory[c.pc+3]] = 1
+			c.memory[c.Address(3)] = 1
 		} else {
-			c.memory[c.memory[c.pc+3]] = 0
+			c.memory[c.Address(3)] = 0
 		}
 		c.pc += 4
 	case 8: // Equals
 		if c.Argument(1) == c.Argument(2) {
-			c.memory[c.memory[c.pc+3]] = 1
+			c.memory[c.Address(3)] = 1
 		} else {
-			c.memory[c.memory[c.pc+3]] = 0
+			c.memory[c.Address(3)] = 0
 		}
 		c.pc += 4
+	case 9: // Adjust relative base
+		c.relativeBase += c.Argument(1)
+		c.pc += 2
 	case 99: // Halt
 		c.halted = true
 	default:
@@ -151,4 +175,13 @@ func (c *Cpu) Input(input []int) {
 
 func (c *Cpu) Output() []int {
 	return c.output
+}
+
+func (c *Cpu) Memory() []int {
+	max := slices.Max(maps.Keys(c.memory))
+	result := make([]int, max+1)
+	for i := 0; i <= max; i++ {
+		result[i] = c.memory[i]
+	}
+	return result
 }

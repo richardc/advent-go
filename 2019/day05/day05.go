@@ -22,7 +22,7 @@ func init() {
 }
 
 func solve(puzzle string, input int) int {
-	cpu := intcode.NewCpu(puzzle)
+	cpu := intcode.New(puzzle)
 	cpu.Input([]int{input})
 	cpu.Run()
 	output := cpu.Output()

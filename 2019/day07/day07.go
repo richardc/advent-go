@@ -23,7 +23,7 @@ func init() {
 }
 
 func maxSignal(puzzle string) int {
-	program := intcode.NewCpu(puzzle)
+	program := intcode.New(puzzle)
 	settings := []int{0, 1, 2, 3, 4}
 	max := 0
 	for _, sequence := range slices.Permutations(settings) {
@@ -42,7 +42,7 @@ func maxSignal(puzzle string) int {
 }
 
 func maxLoopedSignal(puzzle string) int {
-	program := intcode.NewCpu(puzzle)
+	program := intcode.New(puzzle)
 	settings := []int{5, 6, 7, 8, 9}
 	max := 0
 
