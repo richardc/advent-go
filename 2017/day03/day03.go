@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/richardc/advent-go/input"
-	"github.com/richardc/advent-go/math"
+	"github.com/richardc/advent-go/maths"
 	"github.com/richardc/advent-go/runner"
 	"github.com/richardc/advent-go/slices"
 	"golang.org/x/exp/maps"
@@ -66,7 +66,7 @@ func spiralManhattanTours(puzzle int, visit func(x, y int) bool) int {
 	miny, maxy := 0, 0
 	direction := 0
 	for visit(x, y) {
-		//fmt.Printf("%d: %d,%d %d\n", n, x, y, math.Abs(x)+math.Abs(y))
+		//fmt.Printf("%d: %d,%d %d\n", n, x, y, maths.Abs(x)+maths.Abs(y))
 		switch direction {
 		case 0:
 			x++
@@ -94,5 +94,5 @@ func spiralManhattanTours(puzzle int, visit func(x, y int) bool) int {
 			}
 		}
 	}
-	return math.Abs(x) + math.Abs(y)
+	return maths.Abs(x) + maths.Abs(y)
 }

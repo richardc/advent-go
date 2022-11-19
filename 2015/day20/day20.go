@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/richardc/advent-go/input"
-	"github.com/richardc/advent-go/math"
+	"github.com/richardc/advent-go/maths"
 	"github.com/richardc/advent-go/runner"
 	"golang.org/x/exp/slices"
 )
@@ -37,7 +37,7 @@ func lowestHouseUnionized(target int) int {
 	max := target / 10
 	presents := make([]int, max)
 	for elf := 1; elf < max; elf++ {
-		for house := elf; house < math.Min(elf*50, max); house += elf {
+		for house := elf; house < maths.Min(elf*50, max); house += elf {
 			presents[house] += elf * 11
 		}
 	}

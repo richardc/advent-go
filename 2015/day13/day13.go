@@ -8,7 +8,7 @@ import (
 	"golang.org/x/exp/maps"
 
 	"github.com/richardc/advent-go/input"
-	"github.com/richardc/advent-go/math"
+	"github.com/richardc/advent-go/maths"
 	"github.com/richardc/advent-go/runner"
 	"github.com/richardc/advent-go/slices"
 )
@@ -67,7 +67,7 @@ func happiestSeating(s []string, withDullard bool) int {
 		for i := 0; i < len(seating)-1; i++ {
 			value += graph[edge(seating[i], seating[i+1])]
 		}
-		max = math.Max(max, value)
+		max = maths.Max(max, value)
 	}
 
 	return max

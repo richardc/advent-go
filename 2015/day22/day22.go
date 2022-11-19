@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/richardc/advent-go/input"
-	"github.com/richardc/advent-go/math"
+	"github.com/richardc/advent-go/maths"
 	"github.com/richardc/advent-go/runner"
 	"github.com/richardc/advent-go/slices"
 )
@@ -120,9 +120,9 @@ func (g *game) tick() game {
 	if g.w.recharge > 0 {
 		g.w.mana += 101
 	}
-	g.w.shield -= math.Signum(g.w.shield)
-	g.w.poison -= math.Signum(g.w.poison)
-	g.w.recharge -= math.Signum(g.w.recharge)
+	g.w.shield -= maths.Signum(g.w.shield)
+	g.w.poison -= maths.Signum(g.w.poison)
+	g.w.recharge -= maths.Signum(g.w.recharge)
 	return *g
 }
 
@@ -132,7 +132,7 @@ func (g game) bossmove() game {
 		return g
 	}
 	if g.w.shield > 0 {
-		g.w.health -= math.Max(0, g.b.damage-7)
+		g.w.health -= maths.Max(0, g.b.damage-7)
 	} else {
 		g.w.health -= g.b.damage
 	}

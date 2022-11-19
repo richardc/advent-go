@@ -8,7 +8,7 @@ import (
 
 	"golang.org/x/exp/slices"
 
-	mth "github.com/richardc/advent-go/math"
+	mth "github.com/richardc/advent-go/maths"
 	"github.com/richardc/advent-go/runner"
 	slces "github.com/richardc/advent-go/slices"
 )

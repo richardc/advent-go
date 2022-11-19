@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/richardc/advent-go/input"
-	"github.com/richardc/advent-go/math"
+	"github.com/richardc/advent-go/maths"
 	"github.com/richardc/advent-go/runner"
 	"github.com/richardc/advent-go/slices"
 	"golang.org/x/exp/maps"
@@ -63,7 +63,7 @@ func maxRegister(puzzle string) (terminal int, running int) {
 			registers[toks[0]] -= input.MustAtoi(toks[2])
 		}
 
-		running = math.Max(running, registers[toks[0]])
+		running = maths.Max(running, registers[toks[0]])
 	}
 	return slices.Max(maps.Values(registers)), running
 }

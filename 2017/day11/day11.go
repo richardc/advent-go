@@ -4,7 +4,7 @@ import (
 	_ "embed"
 	"strings"
 
-	"github.com/richardc/advent-go/math"
+	"github.com/richardc/advent-go/maths"
 	"github.com/richardc/advent-go/runner"
 	"github.com/richardc/advent-go/slices"
 )
@@ -58,7 +58,7 @@ func hexDistances(puzzle string) (int, int) {
 			x--
 			z++
 		}
-		max = math.Max(max, slices.Max([]int{math.Abs(x), math.Abs(y), math.Abs(z)}))
+		max = maths.Max(max, slices.Max([]int{maths.Abs(x), maths.Abs(y), maths.Abs(z)}))
 	}
-	return slices.Max([]int{math.Abs(x), math.Abs(y), math.Abs(z)}), max
+	return slices.Max([]int{maths.Abs(x), maths.Abs(y), maths.Abs(z)}), max
 }

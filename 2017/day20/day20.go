@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/richardc/advent-go/input"
-	"github.com/richardc/advent-go/math"
+	"github.com/richardc/advent-go/maths"
 	"github.com/richardc/advent-go/runner"
 	"github.com/richardc/advent-go/slices"
 )
@@ -39,7 +39,7 @@ func NewVector(s string) Vector {
 }
 
 func (v Vector) Distance(other Vector) int {
-	return math.Abs(v.X-other.X) + math.Abs(v.Y-other.Y) + math.Abs(v.Z-other.Z)
+	return maths.Abs(v.X-other.X) + maths.Abs(v.Y-other.Y) + maths.Abs(v.Z-other.Z)
 }
 
 func (v *Vector) Add(other Vector) {

@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/richardc/advent-go/input"
-	"github.com/richardc/advent-go/math"
+	"github.com/richardc/advent-go/maths"
 	"github.com/richardc/advent-go/runner"
 	"github.com/richardc/advent-go/slices"
 	"golang.org/x/exp/maps"
@@ -71,7 +71,7 @@ func solve(puzzle string) (int, int) {
 	}
 
 	crossed := slices.Filter(maps.Keys(points), func(p Point) bool { return points[p] == 3 })
-	closest := slices.Min(slices.Map(crossed, func(p Point) int { return math.Abs(p[0]) + math.Abs(p[1]) }))
+	closest := slices.Min(slices.Map(crossed, func(p Point) int { return maths.Abs(p[0]) + maths.Abs(p[1]) }))
 	smallest := slices.Min(slices.Map(crossed, func(p Point) int { return steps[0][p] + steps[1][p] }))
 	return closest, smallest
 }

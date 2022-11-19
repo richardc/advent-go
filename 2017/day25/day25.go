@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/richardc/advent-go/input"
-	"github.com/richardc/advent-go/math"
+	"github.com/richardc/advent-go/maths"
 	"github.com/richardc/advent-go/runner"
 )
 
@@ -70,7 +70,7 @@ func NewMachine(s string) Machine {
 				Next:  StateID(lines[8][len(lines[8])-2] - byte('A')),
 			},
 		})
-		lines = lines[math.Min(10, len(lines)):]
+		lines = lines[maths.Min(10, len(lines)):]
 	}
 	return machine
 }

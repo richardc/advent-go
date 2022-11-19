@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/richardc/advent-go/input"
-	"github.com/richardc/advent-go/math"
+	"github.com/richardc/advent-go/maths"
 	"github.com/richardc/advent-go/runner"
 	"github.com/richardc/advent-go/slices"
 )
@@ -56,10 +56,10 @@ func cookieScore(recipe map[ingredient]int) int {
 		texture += k.texture * v
 	}
 
-	capacity = math.Max(capacity, 0)
-	durability = math.Max(durability, 0)
-	flavour = math.Max(flavour, 0)
-	texture = math.Max(texture, 0)
+	capacity = maths.Max(capacity, 0)
+	durability = maths.Max(durability, 0)
+	flavour = maths.Max(flavour, 0)
+	texture = maths.Max(texture, 0)
 
 	return capacity * durability * flavour * texture
 }
@@ -86,10 +86,10 @@ func bestScore4(ingredients []ingredient) (max, calory_max int) {
 				}
 
 				score := cookieScore(recipe)
-				max = math.Max(max, score)
+				max = maths.Max(max, score)
 
 				if calories(recipe) == 500 {
-					calory_max = math.Max(calory_max, score)
+					calory_max = maths.Max(calory_max, score)
 				}
 			}
 		}
@@ -108,7 +108,7 @@ func bestScore2(ingredients []ingredient) int {
 			ingredients[1]: two,
 		}
 
-		max = math.Max(max, cookieScore(recipe))
+		max = maths.Max(max, cookieScore(recipe))
 	}
 
 	return max

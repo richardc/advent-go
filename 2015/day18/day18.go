@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/richardc/advent-go/input"
-	"github.com/richardc/advent-go/math"
+	"github.com/richardc/advent-go/maths"
 	"github.com/richardc/advent-go/runner"
 	"github.com/richardc/advent-go/slices"
 )
@@ -83,8 +83,8 @@ func (l *life) step() {
 
 func (l life) neighbours(cx, cy int) int {
 	count := 0
-	for x := math.Max(cx-1, 0); x < math.Min(cx+2, l.x); x++ {
-		for y := math.Max(cy-1, 0); y < math.Min(cy+2, l.y); y++ {
+	for x := maths.Max(cx-1, 0); x < maths.Min(cx+2, l.x); x++ {
+		for y := maths.Max(cy-1, 0); y < maths.Min(cy+2, l.y); y++ {
 			if l.cells[y][x] {
 				count++
 			}
