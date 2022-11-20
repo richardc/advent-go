@@ -88,3 +88,24 @@ func Test_mostAsteroids(t *testing.T) {
 		})
 	}
 }
+
+func TestField_laserBeam(t *testing.T) {
+	type args struct {
+		puzzle string
+		nth    int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{"example 4", args{example4, 200}, 802},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := laserBeam(tt.args.puzzle, tt.args.nth); got != tt.want {
+				t.Errorf("laserBeam() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

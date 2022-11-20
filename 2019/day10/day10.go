@@ -2,6 +2,7 @@ package day10
 
 import (
 	_ "embed"
+	"math"
 
 	"github.com/richardc/advent-go/input"
 	"github.com/richardc/advent-go/maths"
@@ -20,6 +21,7 @@ func init() {
 			Year:  2019,
 			Day:   10,
 			Part1: func(any) any { return mostAsteroids(puzzle) },
+			Part2: func(any) any { return laserBeam(puzzle, 200) },
 		},
 	)
 }
@@ -31,6 +33,10 @@ type Point struct {
 
 func (p *Point) Distance(other Point) int {
 	return maths.AbsDiff(p.Row, other.Row) + maths.AbsDiff(p.Col, other.Col)
+}
+
+func (p *Point) Angle(other Point) float64 {
+	return math.Atan2(float64(other.Col-p.Col), float64(other.Row-p.Row))
 }
 
 type Field struct {
@@ -56,7 +62,7 @@ func newField(s string) Field {
 }
 
 func (f *Field) mostAsteroids() int {
-	visible := map[Point]int{}
+	visible := map[Point][]Point{}
 	for _, asteroid := range f.asteroids {
 		visible[asteroid] = f.visibleFrom(asteroid)
 	}
@@ -67,8 +73,24 @@ func (f *Field) mostAsteroids() int {
 	// 	fmt.Println()
 	// }
 	// fmt.Println(visible)
-	best := slcs.MaxBy(maps.Keys(visible), func(p Point) int { return visible[p] })
-	return visible[best]
+	best := slcs.MaxBy(maps.Keys(visible), func(p Point) int { return len(visible[p]) })
+	return len(visible[best])
+}
+
+func (f *Field) laserBeam(nth int) int {
+	visible := map[Point][]Point{}
+	for _, asteroid := range f.asteroids {
+		visible[asteroid] = f.visibleFrom(asteroid)
+	}
+
+	best := slcs.MaxBy(maps.Keys(visible), func(p Point) int { return len(visible[p]) })
+	killList := visible[best]
+
+	slices.SortFunc(killList, func(a, b Point) bool {
+		return best.Angle(a) > best.Angle(b)
+	})
+	target := killList[nth-1]
+	return target.Col*100 + target.Row
 }
 
 func (f *Field) contains(p Point) bool {
@@ -78,7 +100,7 @@ func (f *Field) contains(p Point) bool {
 	return true
 }
 
-func (f *Field) visibleFrom(asteroid Point) int {
+func (f *Field) visibleFrom(asteroid Point) []Point {
 	others := slcs.Filter(f.asteroids, func(p Point) bool { return p != asteroid })
 	slices.SortFunc(others, func(a, b Point) bool { return asteroid.Distance(a) < asteroid.Distance(b) })
 	visible := map[Point]struct{}{}
@@ -96,7 +118,7 @@ func (f *Field) visibleFrom(asteroid Point) int {
 		}
 	}
 
-	return len(visible)
+	return maps.Keys(visible)
 }
 
 func (f *Field) project(origin, point Point) []Point {
@@ -149,4 +171,9 @@ func (f *Field) project(origin, point Point) []Point {
 func mostAsteroids(puzzle string) int {
 	field := newField(puzzle)
 	return field.mostAsteroids()
+}
+
+func laserBeam(puzzle string, nth int) int {
+	field := newField(puzzle)
+	return field.laserBeam(nth)
 }
