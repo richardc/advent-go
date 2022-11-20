@@ -19,7 +19,7 @@ func TestRobot_handleOutput(t *testing.T) {
 		want   want
 	}{
 		{"example step 1", []int{1, 0}, want{Point{-1, 0}, Left, map[Point]int{{0, 0}: 1}}},
-		{"example step 2", []int{1, 0, 0, 0}, want{Point{-1, -1}, Down, map[Point]int{{0, 0}: 1, {-1, 0}: 0}}},
+		{"example step 2", []int{1, 0, 0, 0}, want{Point{-1, 1}, Down, map[Point]int{{0, 0}: 1, {-1, 0}: 0}}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

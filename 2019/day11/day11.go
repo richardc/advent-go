@@ -5,6 +5,8 @@ import (
 
 	"github.com/richardc/advent-go/2019/intcode"
 	"github.com/richardc/advent-go/runner"
+	"github.com/richardc/advent-go/slices"
+	"golang.org/x/exp/maps"
 )
 
 //go:embed "input.txt"
@@ -16,6 +18,7 @@ func init() {
 			Year:  2019,
 			Day:   11,
 			Part1: func(any) any { return numPainted(puzzle) },
+			Part2: func(any) any { return codePainted(puzzle) },
 		},
 	)
 }
@@ -65,9 +68,9 @@ func (r *Robot) handleOutput(i int) {
 		}
 		switch r.Facing {
 		case Up:
-			r.Position.Y++
-		case Down:
 			r.Position.Y--
+		case Down:
+			r.Position.Y++
 		case Right:
 			r.Position.X++
 		case Left:
@@ -88,4 +91,24 @@ func numPainted(s string) int {
 	robot.run()
 	// fmt.Printf("%+v\n", robot)
 	return len(robot.Hull)
+}
+
+func codePainted(s string) string {
+	robot := newRobot(s)
+	robot.Hull[robot.Position] = 1
+	robot.run()
+	minx, maxx := slices.MinMax(slices.Map(maps.Keys(robot.Hull), func(p Point) int { return p.X }))
+	miny, maxy := slices.MinMax(slices.Map(maps.Keys(robot.Hull), func(p Point) int { return p.Y }))
+	out := "\n"
+	for y := miny; y <= maxy; y++ {
+		for x := minx; x <= maxx; x++ {
+			if robot.Hull[Point{x, y}] == 1 {
+				out += "#"
+			} else {
+				out += " "
+			}
+		}
+		out += "\n"
+	}
+	return out
 }
