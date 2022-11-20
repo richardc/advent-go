@@ -32,3 +32,17 @@ func Abs[T constraints.Signed](n T) T {
 	}
 	return n
 }
+
+func AbsDiff[T constraints.Signed](a, b T) T {
+	if a < b {
+		return Abs(b - a)
+	}
+	return Abs(a - b)
+}
+
+func GCD[T constraints.Integer](a, b T) T {
+	for b != 0 {
+		a, b = b, a%b
+	}
+	return Max(a, -a)
+}

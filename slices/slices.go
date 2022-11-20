@@ -4,6 +4,10 @@ import (
 	"golang.org/x/exp/constraints"
 )
 
+func Identity[T any](v T) T {
+	return v
+}
+
 func Filter[S ~[]E, E any](s S, p func(E) bool) S {
 	result := make(S, 0)
 	for _, v := range s {
@@ -78,6 +82,19 @@ func MinBy[E any, O constraints.Ordered](s []E, f func(E) O) E {
 		}
 	}
 	return min
+}
+
+func MaxBy[E any, O constraints.Ordered](s []E, f func(E) O) E {
+	max := s[0]
+	maxMapped := f(s[0])
+	for _, v := range s[1:] {
+		mapped := f(v)
+		if mapped > maxMapped {
+			maxMapped = mapped
+			max = v
+		}
+	}
+	return max
 }
 
 func Min[E constraints.Ordered](s []E) E {
