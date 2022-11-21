@@ -65,3 +65,24 @@ func Test_energyAfter(t *testing.T) {
 		})
 	}
 }
+
+func Test_cyclesAt(t *testing.T) {
+	type args struct {
+		s string
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{"example 1", args{example1}, 2772},
+		{"example 2", args{example2}, 4686774924},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := cyclesAt(tt.args.s); got != tt.want {
+				t.Errorf("cyclesAt() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

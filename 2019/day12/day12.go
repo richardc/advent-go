@@ -19,6 +19,7 @@ func init() {
 			Year:  2019,
 			Day:   12,
 			Part1: func(any) any { return energyAfter(puzzle, 1000) },
+			Part2: func(any) any { return cyclesAt(puzzle) },
 		},
 	)
 }
@@ -114,4 +115,32 @@ func energyAfter(s string, steps int) int {
 		moons.Step()
 	}
 	return moons.Energy()
+}
+
+func cyclesAt(s string) int {
+	start := newMoons(s)
+	moons := newMoons(s)
+	cyclex := 0
+	cycley := 0
+	cyclez := 0
+	for step := 1; !(cyclex != 0 && cycley != 0 && cyclez != 0); step++ {
+		moons.Step()
+		if cyclex == 0 && slices.All(slices.Zip(start.Moons, moons.Moons), func(s slices.Zipped[Moon]) bool {
+			return s.A.Position.X == s.B.Position.X && s.A.Velocity.X == s.B.Velocity.X
+		}) {
+			cyclex = step
+		}
+		if cycley == 0 && slices.All(slices.Zip(start.Moons, moons.Moons), func(s slices.Zipped[Moon]) bool {
+			return s.A.Position.Y == s.B.Position.Y && s.A.Velocity.Y == s.B.Velocity.Y
+		}) {
+			cycley = step
+		}
+		if cyclez == 0 && slices.All(slices.Zip(start.Moons, moons.Moons), func(s slices.Zipped[Moon]) bool {
+			return s.A.Position.Z == s.B.Position.Z && s.A.Velocity.Z == s.B.Velocity.Z
+		}) {
+			cyclez = step
+		}
+	}
+
+	return maths.LCM(maths.LCM(cyclex, cycley), cyclez)
 }

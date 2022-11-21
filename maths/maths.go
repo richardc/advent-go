@@ -46,3 +46,7 @@ func GCD[T constraints.Integer](a, b T) T {
 	}
 	return Max(a, -a)
 }
+
+func LCM[T constraints.Integer](a, b T) T {
+	return (a * b) / GCD(a, b)
+}

@@ -26,6 +26,21 @@ func Map[S []E, E any, R any](in S, f func(E) R) []R {
 	return result
 }
 
+type Zipped[T any] struct {
+	A, B T
+}
+
+func Zip[T any](as, bs []T) []Zipped[T] {
+	var zipped []Zipped[T]
+	for i := range as {
+		zipped = append(zipped, Zipped[T]{
+			A: as[i],
+			B: bs[i],
+		})
+	}
+	return zipped
+}
+
 type Group[K any, E any] struct {
 	Key   K
 	Group []E
