@@ -14,6 +14,7 @@ type Cpu struct {
 	input        []int
 	output       []int
 	outputFunc   func(int)
+	inputFunc    func() int
 	pc           int
 	relativeBase int
 	halted       bool
@@ -56,6 +57,10 @@ func (c *Cpu) Reset(other *Cpu) {
 	c.memory = memory
 }
 
+func (c *Cpu) InputFunc(f func() int) {
+	c.inputFunc = f
+}
+
 func (c *Cpu) OutputFunc(f func(int)) {
 	c.outputFunc = f
 }
@@ -96,12 +101,17 @@ func (c *Cpu) Step() {
 		c.memory[c.Address(3)] = c.Argument(1) * c.Argument(2)
 		c.pc += 4
 	case 3: // Input
-		if len(c.input) > 0 {
-			c.memory[c.Address(1)] = c.input[0]
-			c.input = c.input[1:]
+		if c.inputFunc != nil {
+			c.memory[c.Address(1)] = c.inputFunc()
 			c.pc += 2
 		} else {
-			c.blocked = true
+			if len(c.input) > 0 {
+				c.memory[c.Address(1)] = c.input[0]
+				c.input = c.input[1:]
+				c.pc += 2
+			} else {
+				c.blocked = true
+			}
 		}
 	case 4: // Output
 		if c.outputFunc != nil {
